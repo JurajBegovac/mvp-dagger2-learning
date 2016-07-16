@@ -14,12 +14,6 @@ import dagger.Component;
 @Singleton
 @Component(modules = {ApplicationModule.class})
 public interface ApplicationComponent {
-    // Activity targets
-
-    // Fragment targets
-
-    // Presenter targets
-
     // provide to components that depend on this component
     @ApplicationContext
     Context context();
