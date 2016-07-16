@@ -23,6 +23,7 @@ public class HomeScreen {
         //targets
         void inject(HomeView p_target);
 
+        // provide dependencies
         HomeView view();
     }
 
@@ -32,7 +33,7 @@ public class HomeScreen {
         @PerScreen
         @Provides
         public HomeView provideView(@ActivityContext Context p_context) {
-            return (HomeView) View.inflate(p_context, R.layout.activity_main, null);
+            return (HomeView) View.inflate(p_context, R.layout.screen_home, null);
         }
 
         @PerScreen
