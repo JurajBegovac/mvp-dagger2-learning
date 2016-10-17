@@ -28,6 +28,10 @@ import flow.Flow;
 @AutoValue
 public abstract class ProfileScreen {
 
+    public static ProfileScreen create(String p_id) {
+        return new AutoValue_ProfileScreen(p_id);
+    }
+
     public abstract String id();
 
     public Component getComponent(ActivityComponent p_activityComponent) {
@@ -71,16 +75,12 @@ public abstract class ProfileScreen {
         }
     }
 
-    public interface Presenter extends Mvp.Presenter<ProfileView> {
-        void onBackPressed();
-    }
-
-    public static ProfileScreen create(String p_id) {
-        return new AutoValue_ProfileScreen(p_id);
-    }
-
     public interface PresenterFactory {
         Presenter createPresenter(String p_id);
+    }
+
+    public interface Presenter extends Mvp.Presenter<ProfileView> {
+        void onBackPressed();
     }
 
     @AutoFactory(implementing = PresenterFactory.class)
