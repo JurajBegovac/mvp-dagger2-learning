@@ -7,6 +7,7 @@ import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 import com.google.auto.value.AutoValue;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import javax.inject.Provider;
@@ -26,7 +27,7 @@ import flow.Flow;
  * Created by juraj on 17/10/16.
  */
 @AutoValue
-public abstract class ProfileScreen {
+public abstract class ProfileScreen implements Serializable {
 
     public static ProfileScreen create(String p_id) {
         return new AutoValue_ProfileScreen(p_id);
