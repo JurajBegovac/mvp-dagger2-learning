@@ -2,24 +2,21 @@ package beg.hr.mvpdagger.home;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-
-import javax.inject.Inject;
+import android.widget.LinearLayout;
 
 import beg.hr.mvpdagger.R;
-import butterknife.BindView;
+import beg.hr.mvpdagger.home.HomeScreen.Presenter;
+import beg.hr.mvpdagger.util.mvp.Mvp.HasPresenter;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by juraj on 16/07/16.
+ * Created by juraj on 17/10/16.
  */
-public class HomeView extends RelativeLayout {
 
-    @Inject HomeScreen.Presenter m_presenter;
+public class HomeView extends LinearLayout implements HasPresenter<HomeScreen.Presenter> {
 
-    @BindView(R.id.button) Button m_button;
+    private Presenter m_presenter;
 
     public HomeView(Context context) {
         this(context, null);
@@ -32,15 +29,8 @@ public class HomeView extends RelativeLayout {
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        m_presenter.takeView(this);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        m_presenter.dropView(this);
+    public void setPresenter(HomeScreen.Presenter p_presenter) {
+        m_presenter = p_presenter;
     }
 
     @Override
@@ -51,10 +41,6 @@ public class HomeView extends RelativeLayout {
 
     @OnClick(R.id.button)
     public void onClickButton() {
-        m_presenter.dummy();
-    }
-
-    public void setButtonText(String p_text) {
-        m_button.setText(p_text);
+        m_presenter.onButtonPressed();
     }
 }

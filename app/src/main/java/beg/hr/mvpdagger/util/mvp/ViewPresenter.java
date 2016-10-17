@@ -1,5 +1,8 @@
 package beg.hr.mvpdagger.util.mvp;
 
+
+import beg.hr.mvpdagger.util.mvp.Mvp.Presenter;
+
 public abstract class ViewPresenter<V> implements Presenter<V> {
 
     private V view = null;
@@ -53,8 +56,8 @@ public abstract class ViewPresenter<V> implements Presenter<V> {
         if (view == null) throw new NullPointerException("dropped view must not be null");
         if (view == this.view) {
             loaded = false;
-            this.view = null;
             onDestroy();
+            this.view = null;
         }
     }
 

@@ -22,7 +22,7 @@ public class ActivityModule {
     @PerActivity
     @Provides
     @ActivityContext
-    public Context provideContext() {
+    public Context activityContext() {
         return m_activity;
     }
 }
