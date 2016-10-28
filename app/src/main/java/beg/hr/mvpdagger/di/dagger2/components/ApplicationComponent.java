@@ -1,13 +1,10 @@
 package beg.hr.mvpdagger.di.dagger2.components;
 
-import android.content.Context;
-
 import javax.inject.Singleton;
 
 import beg.hr.mvpdagger.db.DbModule;
-import beg.hr.mvpdagger.db.UserRepository;
+import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.di.dagger2.modules.ApplicationModule;
-import beg.hr.mvpdagger.di.dagger2.qualifiers.ApplicationContext;
 import dagger.Component;
 
 /**
@@ -16,9 +13,5 @@ import dagger.Component;
 @Singleton
 @Component(modules = {ApplicationModule.class, DbModule.class})
 public interface ApplicationComponent {
-    @ApplicationContext
-    Context context();
-
-    UserRepository userRepository();
-
+    ActivityComponent plus(ActivityModule p_module);
 }

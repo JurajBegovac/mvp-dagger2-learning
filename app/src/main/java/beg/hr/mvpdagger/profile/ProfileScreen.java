@@ -21,6 +21,7 @@ import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
 import beg.hr.mvpdagger.util.mvp.Mvp;
 import beg.hr.mvpdagger.util.mvp.ViewPresenter;
 import dagger.Provides;
+import dagger.Subcomponent;
 import flow.Flow;
 
 /**
@@ -35,15 +36,12 @@ public abstract class ProfileScreen implements Serializable {
 
     public abstract String id();
 
-    public Component getComponent(ActivityComponent p_activityComponent) {
-        return DaggerProfileScreen_Component.builder()
-                .activityComponent(p_activityComponent)
-                .module(new Module())
-                .build();
+    public Component component(ActivityComponent p_activityComponent) {
+        return p_activityComponent.plus(new Module());
     }
 
     @PerScreen
-    @dagger.Component(modules = Module.class, dependencies = ActivityComponent.class)
+    @Subcomponent(modules = Module.class)
     public interface Component {
         Mvp.Link<Presenter, ProfileView> mvp();
     }

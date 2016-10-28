@@ -9,7 +9,6 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
-import beg.hr.mvpdagger.MainActivity;
 import beg.hr.mvpdagger.R;
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
@@ -18,29 +17,27 @@ import beg.hr.mvpdagger.profile.ProfileScreen;
 import beg.hr.mvpdagger.util.mvp.Mvp;
 import beg.hr.mvpdagger.util.mvp.ViewPresenter;
 import dagger.Provides;
+import dagger.Subcomponent;
 import flow.Flow;
 
 /**
  * Created by juraj on 29/09/16.
  */
 @AutoValue
-public class HomeScreen implements Serializable {
+public abstract class HomeScreen implements Serializable {
 
     public static HomeScreen create() {
         return new AutoValue_HomeScreen();
     }
 
-    public Component getComponent(ActivityComponent p_activityComponent) {
-        return DaggerHomeScreen_Component.builder()
-                .activityComponent(p_activityComponent)
-                .build();
+    public Component component(ActivityComponent p_activityComponent) {
+        return p_activityComponent.plus(new Module());
     }
 
     @PerScreen
-    @dagger.Component(modules = Module.class, dependencies = ActivityComponent.class)
+    @Subcomponent(modules = Module.class)
     public interface Component {
         Mvp.Link<Presenter, HomeView> mvp();
-        void inject(MainActivity p_target);
     }
 
     @dagger.Module
