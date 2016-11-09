@@ -3,8 +3,11 @@ package beg.hr.mvpdagger.di.dagger2.modules;
 import android.app.Activity;
 import android.content.Context;
 
+import javax.inject.Singleton;
+
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
+import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,7 +22,7 @@ public class ActivityModule {
         m_activity = p_activity;
     }
 
-    @PerActivity
+    @PerScreen
     @Provides
     @ActivityContext
     public Context activityContext() {

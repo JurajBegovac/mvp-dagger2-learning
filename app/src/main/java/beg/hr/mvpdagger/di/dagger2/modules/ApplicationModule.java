@@ -6,6 +6,7 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ApplicationContext;
+import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
 import dagger.Module;
 import dagger.Provides;
 
@@ -20,13 +21,13 @@ public class ApplicationModule {
         m_application = p_application;
     }
 
-    @Singleton
+    @PerActivity
     @Provides
     Application application() {
         return m_application;
     }
 
-    @Singleton
+    @PerActivity
     @Provides
     @ApplicationContext
     Context applicationContext() {

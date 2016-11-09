@@ -11,13 +11,14 @@ import javax.inject.Inject;
 
 import beg.hr.mvpdagger.R;
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
+import beg.hr.mvpdagger.di.dagger2.components.ApplicationComponent;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
-import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
+import beg.hr.mvpdagger.di.dagger2.qualifiers.ApplicationContext;
+import beg.hr.mvpdagger.di.dagger2.scopes.CustomScope3;
 import beg.hr.mvpdagger.profile.ProfileScreen;
 import beg.hr.mvpdagger.util.mvp.Mvp;
 import beg.hr.mvpdagger.util.mvp.ViewPresenter;
 import dagger.Provides;
-import dagger.Subcomponent;
 import flow.Flow;
 
 /**
@@ -31,11 +32,14 @@ public abstract class HomeScreen implements Serializable {
     }
 
     public Component component(ActivityComponent p_activityComponent) {
-        return p_activityComponent.plus(new Module());
+//        DaggerHomeScreen_Component.builder()
+//                .activityComponent(p_activityComponent)
+//                .build();
+        return null;
     }
 
-    @PerScreen
-    @Subcomponent(modules = Module.class)
+    @CustomScope3
+    @dagger.Component(modules = Module.class, dependencies = ApplicationComponent.class)
     public interface Component {
         Mvp.Link<Presenter, HomeView> mvp();
     }
@@ -44,13 +48,13 @@ public abstract class HomeScreen implements Serializable {
     public static class Module {
 
         @Provides
-        @PerScreen
+        @CustomScope3
         public HomeView view(@ActivityContext Context p_context) {
             return (HomeView) View.inflate(p_context, R.layout.screen_home, null);
         }
 
         @Provides
-        @PerScreen
+        @CustomScope3
         public Mvp.Link<Presenter, HomeView> mvp(Presenter p_presenter, HomeView p_view) {
             return Mvp.Link.create(p_presenter, p_view);
         }

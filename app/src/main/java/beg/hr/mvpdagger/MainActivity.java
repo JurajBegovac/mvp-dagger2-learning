@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
+import beg.hr.mvpdagger.di.dagger2.components.DaggerActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.home.HomeScreen;
 import beg.hr.mvpdagger.profile.ProfileScreen;
@@ -18,7 +19,11 @@ public class MainActivity extends FlowActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        m_activityComponent = MvpDaggerApplication.applicationComponent().plus(new ActivityModule(this));
+        m_activityComponent = DaggerActivityComponent.builder()
+                .applicationComponent(MvpDaggerApplication.applicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+//        m_activityComponent = MvpDaggerApplication.applicationComponent().plus(new ActivityModule(this));
         super.onCreate(savedInstanceState);
     }
     @Override
