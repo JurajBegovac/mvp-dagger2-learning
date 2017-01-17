@@ -5,16 +5,21 @@ import android.content.Context;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
-import dagger.Component;
+import beg.hr.mvpdagger.home.HomeScreen;
+import beg.hr.mvpdagger.screen_1.Screen1;
+import beg.hr.mvpdagger.screen_2.Screen2;
+import dagger.Subcomponent;
 
-/**
- * Created by juraj on 16/07/16.
- */
+/** Created by juraj on 16/07/16. */
 @PerActivity
-@Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)
+@Subcomponent(modules = ActivityModule.class)
 public interface ActivityComponent {
+  @ActivityContext
+  Context context();
 
-    // provide to components that depend on this component
-    @ActivityContext
-    Context context();
+  HomeScreen.Component plus(HomeScreen.Module module);
+
+  Screen1.Component plus(Screen1.Module module);
+
+  Screen2.Component plus(Screen2.Module module);
 }

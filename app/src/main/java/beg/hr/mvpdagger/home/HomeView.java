@@ -3,58 +3,56 @@ package beg.hr.mvpdagger.home;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-
-import javax.inject.Inject;
+import android.widget.LinearLayout;
 
 import beg.hr.mvpdagger.R;
+import beg.hr.mvpdagger.home.HomeScreen.Presenter;
+import beg.hr.mvpdagger.util.mvp.Mvp.HasPresenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * Created by juraj on 16/07/16.
- */
-public class HomeView extends RelativeLayout {
+/** Created by juraj on 16/07/16. */
+public class HomeView extends LinearLayout implements HasPresenter<Presenter> {
 
-    @Inject HomeScreen.Presenter m_presenter;
+  @BindView(R.id.button)
+  Button m_button;
 
-    @BindView(R.id.button) Button m_button;
+  private HomeScreen.Presenter presenter;
 
-    public HomeView(Context context) {
-        this(context, null);
-    }
-    public HomeView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-    public HomeView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
+  public HomeView(Context context) {
+    this(context, null);
+  }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        m_presenter.takeView(this);
-    }
+  public HomeView(Context context, AttributeSet attrs) {
+    this(context, attrs, 0);
+  }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        m_presenter.dropView(this);
-    }
+  public HomeView(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+  }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        ButterKnife.bind(this);
-    }
+  @Override
+  protected void onFinishInflate() {
+    super.onFinishInflate();
+    ButterKnife.bind(this);
+  }
 
-    @OnClick(R.id.button)
-    public void onClickButton() {
-        m_presenter.dummy();
-    }
+  @OnClick(R.id.button)
+  public void onClickButton() {
+    presenter.randomPressed();
+  }
+  @OnClick(R.id.button2)
+  public void onClickButton2() {
+    presenter.button2Pressed();
+  }
 
-    public void setButtonText(String p_text) {
-        m_button.setText(p_text);
-    }
+  public void setButtonText(String p_text) {
+    m_button.setText(p_text);
+  }
+
+  @Override
+  public void setPresenter(Presenter presenter) {
+    this.presenter = presenter;
+  }
 }
