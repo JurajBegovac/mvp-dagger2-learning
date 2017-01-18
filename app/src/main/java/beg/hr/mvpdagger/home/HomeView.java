@@ -42,6 +42,7 @@ public class HomeView extends LinearLayout implements HasPresenter<Presenter> {
   public void onClickButton() {
     presenter.randomPressed();
   }
+
   @OnClick(R.id.button2)
   public void onClickButton2() {
     presenter.button2Pressed();
@@ -54,5 +55,9 @@ public class HomeView extends LinearLayout implements HasPresenter<Presenter> {
   @Override
   public void setPresenter(Presenter presenter) {
     this.presenter = presenter;
+  }
+
+  public String getText() {
+    return m_button.getText().toString();
   }
 }

@@ -15,7 +15,6 @@ import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
 import beg.hr.mvpdagger.screen_1.Screen1;
-import beg.hr.mvpdagger.util.mvp.DialogKey;
 import beg.hr.mvpdagger.util.mvp.Mvp;
 import beg.hr.mvpdagger.util.mvp.ViewPresenter;
 import dagger.Provides;
@@ -30,8 +29,8 @@ public abstract class HomeScreen implements Parcelable {
     return new AutoValue_HomeScreen();
   }
 
-  public Component component(ActivityComponent activityComponent) {
-    return activityComponent.plus(new Module());
+  public Component component(ActivityComponent activityComponent, State initState) {
+    return activityComponent.plus(new Module(initState));
   }
 
   @PerScreen
@@ -43,11 +42,17 @@ public abstract class HomeScreen implements Parcelable {
   @PerScreen
   public static class Presenter extends ViewPresenter<HomeView> {
 
-    private final HomeScreen screen;
+    private final State initState;
 
     @Inject
-    public Presenter(HomeScreen screen) {
-      this.screen = screen;
+    public Presenter(State initState) {
+      this.initState = initState;
+    }
+
+    @Override
+    protected void onLoad() {
+      super.onLoad();
+      getView().setButtonText(initState.text());
     }
 
     void randomPressed() {
@@ -56,12 +61,18 @@ public abstract class HomeScreen implements Parcelable {
     }
 
     void button2Pressed() {
-      Flow.get(getView()).set(new DialogKey(screen, Screen1.create()));
+      Flow.get(getView()).set(Screen1.create());
     }
   }
 
   @dagger.Module
-  public class Module {
+  public static class Module {
+
+    private final State initState;
+
+    public Module(State initState) {
+      this.initState = initState;
+    }
 
     @PerScreen
     @Provides
@@ -77,8 +88,24 @@ public abstract class HomeScreen implements Parcelable {
 
     @PerScreen
     @Provides
-    HomeScreen screen() {
-      return HomeScreen.this;
+    State initState() {
+      return initState;
     }
+  }
+
+  @AutoValue
+  public abstract static class State implements Parcelable {
+
+    public static final String KEY = "HomeKey";
+
+    public static State create(String text) {
+      return new AutoValue_HomeScreen_State(text);
+    }
+
+    public static State defaultState() {
+      return State.create("Default state");
+    }
+
+    abstract String text();
   }
 }
