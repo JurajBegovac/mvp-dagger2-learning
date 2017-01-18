@@ -1,12 +1,12 @@
-package beg.hr.mvpdagger.di.dagger2.modules;
+package beg.hr.flowlesstest.dagger2.modules;
 
 import android.app.Activity;
 import android.content.Context;
 
-import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
-import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
 import dagger.Module;
 import dagger.Provides;
+import beg.hr.flowlesstest.dagger2.qualifiers.ActivityContext;
+import beg.hr.flowlesstest.dagger2.scopes.PerActivity;
 
 /**
  * Created by juraj on 16/07/16.
