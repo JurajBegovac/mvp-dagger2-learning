@@ -31,9 +31,12 @@ import flow.TraversalCallback;
 
 public abstract class FlowActivity extends AppCompatActivity implements KeyChanger {
 
-  protected static final int FROM_BOTTOM = 1;
-  protected static final int FROM_RIGHT = 2;
-  protected static final int REPLACE = 3;
+  public static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
+
+  protected static final int NONE = 1;
+  protected static final int FROM_RIGHT_TO_LEFT = 2;
+  protected static final int FROM_LEFT_TO_RIGHT = 3;
+  protected static final int FROM_BOTTOM_UP = 4;
 
   private static final int REQUEST_CODE_NEW_FLOW = 112;
 
@@ -42,7 +45,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
 
   protected abstract Object defaultScreen();
 
-  protected abstract void dispatch(Object mainKey, @Nullable Object dialogKey);
+  protected abstract void dispatch(Object mainKey, @Nullable Object dialogKey, Direction direction);
 
   protected abstract Bundle bundleToSave(View currentView);
 
@@ -52,20 +55,37 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     baseContext =
         Flow.configure(baseContext, this)
             .dispatcher(flowDispatcher)
-            .defaultKey(defaultScreen())
+            //            .defaultKey(defaultScreen())
             .keyParceler(new GsonParceler(new Gson()))
             .install();
     super.attachBaseContext(baseContext);
   }
 
+  // on postCreate issue: https://github.com/square/flow/issues/211
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == REQUEST_CODE_NEW_FLOW) {
-      popHistory();
-      return;
-    }
-    super.onActivityResult(requestCode, resultCode, data);
+  protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    if (savedInstanceState == null) Flow.get(this).setHistory(defaultHistory(), Direction.REPLACE);
   }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    Object key = Flow.get(this).getHistory().top();
+    View currentView = getCurrentView();
+    if (currentView != null) getState(key).setBundle(bundleToSave(currentView));
+    super.onSaveInstanceState(outState);
+  }
+
+  protected abstract History defaultHistory();
+
+//  @Override
+//  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//    if (requestCode == REQUEST_CODE_NEW_FLOW) {
+//      popHistory();
+//      return;
+//    }
+//    super.onActivityResult(requestCode, resultCode, data);
+//  }
 
   @Override
   public void onBackPressed() {
@@ -73,19 +93,6 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     if (!BackSupport.onBackPressed(view)) {
       super.onBackPressed();
     }
-  }
-
-  @Override
-  public void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-    dismissOldDialog();
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    Object key = Flow.get(this).getHistory().top();
-    getState(key).setBundle(bundleToSave(getCurrentView()));
-    super.onSaveInstanceState(outState);
   }
 
   @Override
@@ -97,13 +104,19 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       @NonNull TraversalCallback callback) {
 
     if (outgoingState != null) {
-      outgoingState.setBundle(bundleToSave(getCurrentView()));
+      View currentView = getCurrentView();
+      if (currentView != null) outgoingState.setBundle(bundleToSave(currentView));
     }
 
     final Object mainKey;
     final Object dialogKey;
 
     Object newState = incomingState.getKey();
+
+    if (newState.equals(FLOW_FINISH_SIGNAL)) {
+      finish();
+      return;
+    }
 
     if (newState instanceof DialogKey) {
       mainKey = ((DialogKey) newState).mainContent();
@@ -113,7 +126,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       dialogKey = null;
     }
     dismissOldDialog();
-    dispatch(mainKey, dialogKey);
+    dispatch(mainKey, dialogKey, direction);
     callback.onTraversalCompleted();
   }
 
@@ -139,9 +152,11 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     }
   }
 
+  @Nullable
   private View getCurrentView() {
     ViewGroup view = getRootView();
-    return view.getChildAt(0);
+    if (view.getChildCount() >= 1) return view.getChildAt(0);
+    return null;
   }
 
   protected void showAsDialog(Object key) {
@@ -151,12 +166,19 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
         .setHistory(builder.push(new DialogKey(getMainKey(top), key)).build(), Direction.REPLACE);
   }
 
-  protected void displayMainView(View view) {
+  protected void displayMainView(View view, Direction direction) {
     if (view != null) {
-      //        animate(view, direction);
-      getRootView().removeAllViews();
-      getRootView().addView(view);
+      if (shouldAnimate()) animate(view, direction);
+      ViewGroup rootView = getRootView();
+      View currentView = getCurrentView();
+      if (currentView != null) rootView.removeView(currentView);
+      rootView.addView(view);
     }
+  }
+
+  private boolean shouldAnimate() {
+    Object outgoingKey = flowDispatcher.getOutgoingKey();
+    return !(outgoingKey instanceof DialogKey);
   }
 
   protected void displayDialog(Dialog dialog) {
@@ -198,11 +220,13 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   protected void startAnotherFlow(Intent startIntent, @NewFlowDirection int direction) {
-    startActivityForResult(startIntent, REQUEST_CODE_NEW_FLOW);
-    if (direction == FROM_BOTTOM) {
+    startActivity(startIntent);
+    popHistory();
+//    startActivityForResult(startIntent, REQUEST_CODE_NEW_FLOW);
+    if (direction == FROM_BOTTOM_UP) {
       overridePendingTransition(R.anim.slide_in_bottom, R.anim.nothing);
     }
-    if (direction == FROM_RIGHT) {
+    if (direction == FROM_RIGHT_TO_LEFT) {
       overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
   }
@@ -212,6 +236,6 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   @Retention(RetentionPolicy.SOURCE)
-  @IntDef({FROM_RIGHT, FROM_BOTTOM, REPLACE})
+  @IntDef({FROM_RIGHT_TO_LEFT, FROM_BOTTOM_UP, NONE, FROM_LEFT_TO_RIGHT})
   protected @interface NewFlowDirection {}
 }

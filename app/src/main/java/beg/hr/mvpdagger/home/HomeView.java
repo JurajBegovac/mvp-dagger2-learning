@@ -48,6 +48,15 @@ public class HomeView extends LinearLayout implements HasPresenter<Presenter> {
     presenter.button2Pressed();
   }
 
+  @OnClick(R.id.back)
+  public void onClickBack() {
+    presenter.backPressed();
+  }
+  @OnClick(R.id.another_flow)
+  public void onClickAnotherFlow() {
+    presenter.anotherFlowPressed();
+  }
+
   public void setButtonText(String p_text) {
     m_button.setText(p_text);
   }

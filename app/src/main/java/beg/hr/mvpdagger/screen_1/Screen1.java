@@ -3,6 +3,7 @@ package beg.hr.mvpdagger.screen_1;
 import com.google.auto.value.AutoValue;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.view.View;
 
 import javax.inject.Inject;
@@ -20,14 +21,14 @@ import flow.Flow;
 
 /** Created by juraj on 17/01/2017. */
 @AutoValue
-public abstract class Screen1 {
+public abstract class Screen1 implements Parcelable {
 
   public static Screen1 create() {
     return new AutoValue_Screen1();
   }
 
-  public Component component(ActivityComponent activityComponent) {
-    return activityComponent.plus(new Module());
+  public Component component(ActivityComponent activityComponent, State initState) {
+    return activityComponent.plus(new Module(initState));
   }
 
   @PerScreen
@@ -39,9 +40,21 @@ public abstract class Screen1 {
   @dagger.Module
   public static class Module {
 
+    private State initState;
+
+    public Module(State initState) {
+      this.initState = initState;
+    }
+
     @PerScreen
     @Provides
-    View1 provideView(@ActivityContext Context p_context) {
+    State state() {
+      return initState;
+    }
+
+    @PerScreen
+    @Provides
+    View1 view(@ActivityContext Context p_context) {
       return (View1) View.inflate(p_context, R.layout.view_1, null);
     }
 
@@ -55,8 +68,18 @@ public abstract class Screen1 {
   @PerScreen
   public static class Presenter extends ViewPresenter<View1> {
 
+    private State state;
+
     @Inject
-    public Presenter() {}
+    public Presenter(State state) {
+      this.state = state;
+    }
+
+    @Override
+    protected void onLoad() {
+      super.onLoad();
+      getView().setText(state.editedText());
+    }
 
     void backPressed() {
       Flow.get(getView()).goBack();
@@ -65,5 +88,21 @@ public abstract class Screen1 {
     void dialogPressed() {
       Flow.get(getView()).set(Screen2.create());
     }
+  }
+
+  @AutoValue
+  public abstract static class State implements Parcelable {
+
+    public static final String KEY = "key_screen_1";
+
+    public static State create(String editedText) {
+      return new AutoValue_Screen1_State(editedText);
+    }
+
+    public static State defaultState() {
+      return State.create("");
+    }
+
+    abstract String editedText();
   }
 }

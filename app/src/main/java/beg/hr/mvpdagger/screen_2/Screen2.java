@@ -3,6 +3,7 @@ package beg.hr.mvpdagger.screen_2;
 import com.google.auto.value.AutoValue;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.view.View;
 
 import javax.inject.Inject;
@@ -19,7 +20,7 @@ import flow.Flow;
 
 /** Created by juraj on 17/01/2017. */
 @AutoValue
-public abstract class Screen2 {
+public abstract class Screen2 implements Parcelable {
 
   public static Screen2 create() {
     return new AutoValue_Screen2();

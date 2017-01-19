@@ -21,4 +21,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go to screen 1" />
+
+    <Button
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go back" />
+
+    <Button
+            android:id="@+id/another_flow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start another flow" />
 </beg.hr.mvpdagger.home.HomeView>

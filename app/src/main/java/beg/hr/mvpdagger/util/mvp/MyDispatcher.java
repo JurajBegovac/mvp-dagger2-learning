@@ -31,6 +31,12 @@ public class MyDispatcher implements Dispatcher, KeyChanger {
     return traversal.getState(key);
   }
 
+  @Nullable
+  public Object getOutgoingKey() {
+    State outState = traversal.origin == null ? null : traversal.getState(traversal.origin.top());
+    return outState == null ? null : outState.getKey();
+  }
+
   @Override
   public void dispatch(@NonNull Traversal traversal, @NonNull TraversalCallback callback) {
     this.traversal = traversal;
