@@ -14,7 +14,7 @@ import beg.hr.mvpdagger.R;
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
-import beg.hr.mvpdagger.flow_test_2.FlowWithInitScreenActivity;
+import beg.hr.mvpdagger.flow_test_2.BottomTopActivity;
 import beg.hr.mvpdagger.screen_1.Screen1;
 import beg.hr.mvpdagger.util.mvp.Mvp;
 import beg.hr.mvpdagger.util.mvp.ViewPresenter;
@@ -70,7 +70,7 @@ public abstract class HomeScreen implements Parcelable {
     }
 
     public void anotherFlowPressed() {
-      Flow.get(getView()).set(FlowWithInitScreenActivity.KEY);
+      Flow.get(getView()).set(BottomTopActivity.KEY);
     }
   }
 

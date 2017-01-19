@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
 
 import beg.hr.mvpdagger.R;
+import beg.hr.mvpdagger.flow_test_2.BottomTopActivity;
+import beg.hr.mvpdagger.screen_1.Screen1;
 import flow.Direction;
 import flow.Flow;
 import flow.History;
@@ -29,63 +28,53 @@ import flow.KeyChanger;
 import flow.State;
 import flow.TraversalCallback;
 
+import static flow.Direction.REPLACE;
+
+/** Created by juraj on 19/01/2017. */
 public abstract class FlowActivity extends AppCompatActivity implements KeyChanger {
 
-  public static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
+  protected static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
+  protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
-  protected static final int NONE = 1;
-  protected static final int FROM_RIGHT_TO_LEFT = 2;
-  protected static final int FROM_LEFT_TO_RIGHT = 3;
-  protected static final int FROM_BOTTOM_UP = 4;
+  protected BaseDispatcher flowDispatcher;
 
-  private static final int REQUEST_CODE_NEW_FLOW = 112;
-
-  private MyDispatcher flowDispatcher;
   private Dialog dialog;
 
-  protected abstract Object defaultScreen();
+  protected abstract Object initScreen();
 
-  protected abstract void dispatch(Object mainKey, @Nullable Object dialogKey, Direction direction);
+  protected abstract Bundleable bundleable();
 
-  protected abstract Bundle bundleToSave(View currentView);
+  protected abstract void changeDialogKey(Object dialogKey);
+
+  protected abstract boolean changeMainKey(
+      Object mainKey, Direction direction, TraversalCallback callback);
 
   @Override
-  protected void attachBaseContext(Context baseContext) {
-    flowDispatcher = new MyDispatcher(this, this);
-    baseContext =
-        Flow.configure(baseContext, this)
+  protected void attachBaseContext(Context newBase) {
+    flowDispatcher = new BaseDispatcher(this, this, bundleable());
+    newBase =
+        Flow.configure(newBase, this)
             .dispatcher(flowDispatcher)
-            //            .defaultKey(defaultScreen())
+            .defaultKey(FLOW_EMPTY_SIGNAL)
             .keyParceler(new GsonParceler(new Gson()))
             .install();
-    super.attachBaseContext(baseContext);
+    super.attachBaseContext(newBase);
   }
 
-  // on postCreate issue: https://github.com/square/flow/issues/211
   @Override
   protected void onPostCreate(@Nullable Bundle savedInstanceState) {
     super.onPostCreate(savedInstanceState);
-    if (savedInstanceState == null) Flow.get(this).setHistory(defaultHistory(), Direction.REPLACE);
+    if (savedInstanceState == null) {
+      History history = History.emptyBuilder().push(FLOW_FINISH_SIGNAL).push(initScreen()).build();
+      Flow.get(this).setHistory(history, Direction.REPLACE);
+    }
   }
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    Object key = Flow.get(this).getHistory().top();
-    View currentView = getCurrentView();
-    if (currentView != null) getState(key).setBundle(bundleToSave(currentView));
+    flowDispatcher.saveCurrentState(getCurrentView(), dialog);
     super.onSaveInstanceState(outState);
   }
-
-  protected abstract History defaultHistory();
-
-//  @Override
-//  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    if (requestCode == REQUEST_CODE_NEW_FLOW) {
-//      popHistory();
-//      return;
-//    }
-//    super.onActivityResult(requestCode, resultCode, data);
-//  }
 
   @Override
   public void onBackPressed() {
@@ -102,47 +91,56 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       @NonNull Direction direction,
       @NonNull Map<Object, Context> incomingContexts,
       @NonNull TraversalCallback callback) {
-
     if (outgoingState != null) {
-      View currentView = getCurrentView();
-      if (currentView != null) outgoingState.setBundle(bundleToSave(currentView));
+      flowDispatcher.saveOutgoingState(outgoingState, getCurrentView(), dialog);
     }
 
-    final Object mainKey;
-    final Object dialogKey;
+    Object inKey = incomingState.getKey();
+    Object mainKey;
+    Object dialogKey;
 
-    Object newState = incomingState.getKey();
-
-    if (newState.equals(FLOW_FINISH_SIGNAL)) {
-      finish();
-      return;
-    }
-
-    if (newState instanceof DialogKey) {
-      mainKey = ((DialogKey) newState).mainContent();
-      dialogKey = ((DialogKey) newState).dialogContent();
+    if (inKey instanceof DialogKey) {
+      mainKey = ((DialogKey) inKey).mainContent();
+      dialogKey = ((DialogKey) inKey).dialogContent();
     } else {
-      mainKey = newState;
+      mainKey = inKey;
       dialogKey = null;
     }
-    dismissOldDialog();
-    dispatch(mainKey, dialogKey, direction);
-    callback.onTraversalCompleted();
+
+    // TODO: 19/01/2017 temporary hack
+    boolean shouldComplete = true;
+
+    if (mainKey.equals(FLOW_EMPTY_SIGNAL)) {
+      // this is first empty signal and  it'll be replaced
+      TextView view = new TextView(this);
+      view.setText("Empty view");
+      showMainView(view, direction);
+    } else if (mainKey.equals(FLOW_FINISH_SIGNAL)) {
+      finish();
+      return;
+    } else {
+      // let some other flow implementation handle the key
+      shouldComplete = changeMainKey(mainKey, direction, callback);
+    }
+
+    if (shouldComplete) {
+      dismissOldDialog();
+      if (dialogKey != null) {
+        changeDialogKey(dialogKey);
+      }
+      callback.onTraversalCompleted();
+    }
   }
 
   private ViewGroup getRootView() {
     return (ViewGroup) findViewById(android.R.id.content);
   }
 
-  private void popHistory() {
-    History.Builder history = Flow.get(this).getHistory().buildUpon();
-    history.pop();
-    Flow.get(this).setHistory(history.build(), Direction.REPLACE);
-  }
-
-  private Object getMainKey(Object parent) {
-    if (parent instanceof DialogKey) return ((DialogKey) parent).mainContent();
-    return parent;
+  @Nullable
+  private View getCurrentView() {
+    ViewGroup rootView = getRootView();
+    if (rootView.getChildCount() > 0) return rootView.getChildAt(0);
+    return null;
   }
 
   private void dismissOldDialog() {
@@ -152,40 +150,62 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     }
   }
 
-  @Nullable
-  private View getCurrentView() {
-    ViewGroup view = getRootView();
-    if (view.getChildCount() >= 1) return view.getChildAt(0);
-    return null;
+  private Object getMainKey(Object parent) {
+    if (parent instanceof DialogKey) return ((DialogKey) parent).mainContent();
+    return parent;
   }
 
-  protected void showAsDialog(Object key) {
-    Builder builder = Flow.get(this).getHistory().buildUpon();
-    Object top = builder.peek();
-    Flow.get(this)
-        .setHistory(builder.push(new DialogKey(getMainKey(top), key)).build(), Direction.REPLACE);
+  private void removeOldViewIfNeeded() {
+    View view = getCurrentView();
+    if (view != null) getRootView().removeView(view);
   }
 
-  protected void displayMainView(View view, Direction direction) {
-    if (view != null) {
-      if (shouldAnimate()) animate(view, direction);
-      ViewGroup rootView = getRootView();
-      View currentView = getCurrentView();
-      if (currentView != null) rootView.removeView(currentView);
-      rootView.addView(view);
+  private boolean shouldAnimate(State outgoingState) {
+    return outgoingState == null || !isOutgoingStateDialog(outgoingState);
+  }
+
+  private boolean isOutgoingStateDialog(State outgoingState) {
+    return outgoingState.getKey() instanceof DialogKey;
+  }
+
+  private void animate(View view, @AnimRes int enter, @AnimRes int exit) {
+    final View currentView = getCurrentView();
+    if (currentView != null) {
+      Animation exitAnimation = AnimationUtils.loadAnimation(this, exit);
+      currentView.startAnimation(exitAnimation);
     }
+    Animation enterAnimation = AnimationUtils.loadAnimation(this, enter);
+    view.startAnimation(enterAnimation);
   }
 
-  private boolean shouldAnimate() {
-    Object outgoingKey = flowDispatcher.getOutgoingKey();
-    return !(outgoingKey instanceof DialogKey);
+  protected void showMainView(View view, Direction direction) {
+    State outgoingState = flowDispatcher.getOutgoingState();
+    if (shouldAnimate(outgoingState)) animate(view, direction);
+    removeOldViewIfNeeded();
+    getRootView().addView(view);
   }
 
-  protected void displayDialog(Dialog dialog) {
-    if (dialog != null) {
-      this.dialog = dialog;
-      this.dialog.show();
-    }
+  protected void showDialog(Dialog dialog) {
+    this.dialog = dialog;
+    this.dialog.show();
+  }
+
+  protected void startAnotherFlow(TraversalCallback callback) {
+    callback.onTraversalCompleted();
+    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
+    historyBuilder.pop();
+    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
+    startActivity(BottomTopActivity.getStartIntent(this, Screen1.create()));
+    overridePendingTransition(R.anim.slide_in_bottom, R.anim.nothing);
+  }
+
+  protected void mainKeyToDialogKey(Object mainKey, TraversalCallback callback) {
+    callback.onTraversalCompleted();
+    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
+    historyBuilder.pop();
+    Object main = getMainKey(historyBuilder.peek());
+    historyBuilder.push(new DialogKey(main, mainKey));
+    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
   }
 
   protected void animate(View view, Direction direction) {
@@ -204,38 +224,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     }
   }
 
-  protected void animate(View view, @AnimRes int enter, @AnimRes int exit) {
-    final View currentView = getCurrentView();
-    if (currentView != null) {
-      Animation exitAnimation = AnimationUtils.loadAnimation(this, exit);
-      currentView.startAnimation(exitAnimation);
-    }
-    Animation enterAnimation = AnimationUtils.loadAnimation(this, enter);
-    view.startAnimation(enterAnimation);
+  protected Object initViewState(Object key) {
+    return flowDispatcher.initViewState(key);
   }
-
-  protected void onTraversalSkipped(TraversalCallback callback) {
-    callback.onTraversalCompleted();
-    popHistory();
-  }
-
-  protected void startAnotherFlow(Intent startIntent, @NewFlowDirection int direction) {
-    startActivity(startIntent);
-    popHistory();
-//    startActivityForResult(startIntent, REQUEST_CODE_NEW_FLOW);
-    if (direction == FROM_BOTTOM_UP) {
-      overridePendingTransition(R.anim.slide_in_bottom, R.anim.nothing);
-    }
-    if (direction == FROM_RIGHT_TO_LEFT) {
-      overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }
-  }
-
-  protected State getState(Object key) {
-    return flowDispatcher.getState(key);
-  }
-
-  @Retention(RetentionPolicy.SOURCE)
-  @IntDef({FROM_RIGHT_TO_LEFT, FROM_BOTTOM_UP, NONE, FROM_LEFT_TO_RIGHT})
-  protected @interface NewFlowDirection {}
 }
