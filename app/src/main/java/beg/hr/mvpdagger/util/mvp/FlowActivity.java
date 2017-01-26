@@ -42,6 +42,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
 
   protected abstract Object initScreen();
 
+  @Nullable
   protected abstract Bundleable bundleable();
 
   protected abstract void changeDialogKey(Object dialogKey);
