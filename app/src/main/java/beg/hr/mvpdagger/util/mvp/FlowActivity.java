@@ -43,7 +43,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected abstract Object initScreen();
 
   @Nullable
-  protected abstract Bundleable bundleable();
+  protected abstract ViewStateManager viewStateManager();
 
   protected abstract void changeDialogKey(Object dialogKey);
 
@@ -52,7 +52,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
 
   @Override
   protected void attachBaseContext(Context newBase) {
-    flowDispatcher = new BaseDispatcher(this, this, bundleable());
+    flowDispatcher = new BaseDispatcher(this, this, viewStateManager());
     newBase =
         Flow.configure(newBase, this)
             .dispatcher(flowDispatcher)
@@ -226,6 +226,6 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   protected Object initViewState(Object key) {
-    return flowDispatcher.initViewState(key);
+    return flowDispatcher.initialViewState(key);
   }
 }

@@ -13,8 +13,8 @@ import flow.State;
  *
  * <p>Created by juraj on 19/01/2017.
  */
-public interface Bundleable {
+public interface ViewStateManager {
   Bundle createBundle(Object key, @Nullable View view, @Nullable Dialog dialog);
 
-  Object initViewState(State state);
+  Object initialViewState(State state);
 }

@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver;
-import beg.hr.mvpdagger.util.mvp.Bundleable;
+import beg.hr.mvpdagger.util.mvp.ViewStateManager;
 import beg.hr.mvpdagger.util.mvp.FlowActivity;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
@@ -39,8 +39,8 @@ public class Feature1Flow extends FlowActivity {
 
   @Nullable
   @Override
-  protected Bundleable bundleable() {
-    return new Bundleable() {
+  protected ViewStateManager viewStateManager() {
+    return new ViewStateManager() {
       @Override
       public Bundle createBundle(Object key, @Nullable View view, @Nullable Dialog dialog) {
         if (view == null) return Bundle.EMPTY;
@@ -55,7 +55,7 @@ public class Feature1Flow extends FlowActivity {
       }
 
       @Override
-      public Object initViewState(State state) {
+      public Object initialViewState(State state) {
         Object key = state.getKey();
         Bundle bundle = state.getBundle();
         if (FEATURE1_COMPONENT.equals(key)) {
@@ -76,7 +76,7 @@ public class Feature1Flow extends FlowActivity {
   protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
     View view = null;
     ViewComponent viewComponent =
-        viewComponentFactory.create(mainKey, flowDispatcher.initViewState(mainKey));
+        viewComponentFactory.create(mainKey, flowDispatcher.initialViewState(mainKey));
     if (viewComponent != null) view = viewComponent.view();
     if (view != null) {
       showMainView(view, direction);

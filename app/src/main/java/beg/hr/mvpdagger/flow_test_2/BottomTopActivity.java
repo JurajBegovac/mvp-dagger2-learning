@@ -16,7 +16,7 @@ import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.home.HomeScreen;
 import beg.hr.mvpdagger.screen_1.Screen1;
 import beg.hr.mvpdagger.screen_2.Screen2;
-import beg.hr.mvpdagger.util.mvp.Bundleable;
+import beg.hr.mvpdagger.util.mvp.ViewStateManager;
 import beg.hr.mvpdagger.util.mvp.FlowActivity;
 import flow.Direction;
 import flow.Flow;
@@ -47,8 +47,8 @@ public class BottomTopActivity extends FlowActivity {
   }
 
   @Override
-  protected Bundleable bundleable() {
-    return MvpDaggerApplication.component().bundleable();
+  protected ViewStateManager viewStateManager() {
+    return MvpDaggerApplication.component().viewStateManager();
   }
 
   @Override

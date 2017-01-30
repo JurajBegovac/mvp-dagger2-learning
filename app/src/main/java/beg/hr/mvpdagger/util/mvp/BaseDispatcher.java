@@ -25,14 +25,14 @@ import flow.TraversalCallback;
 public class BaseDispatcher implements Dispatcher, KeyChanger {
   private final KeyDispatcher keyDispatcher;
   private final KeyChanger keyChanger;
-  private final Bundleable bundleable;
+  private final ViewStateManager viewStateManager;
 
   private Traversal traversal;
 
-  public BaseDispatcher(Activity activity, KeyChanger keyChanger, @Nullable Bundleable bundleable) {
+  public BaseDispatcher(Activity activity, KeyChanger keyChanger, @Nullable ViewStateManager viewStateManager) {
     this.keyChanger = keyChanger;
     this.keyDispatcher = (KeyDispatcher) KeyDispatcher.configure(activity, this).build();
-    this.bundleable = bundleable;
+    this.viewStateManager = viewStateManager;
   }
 
   public State getState(Object key) {
@@ -56,23 +56,23 @@ public class BaseDispatcher implements Dispatcher, KeyChanger {
   }
 
   public void saveCurrentState(@Nullable View currentView, @Nullable Dialog dialog) {
-    if (bundleable == null) return;
+    if (viewStateManager == null) return;
     Object currentKey = getCurrentKey();
-    getState(currentKey).setBundle(bundleable.createBundle(currentKey, currentView, dialog));
+    getState(currentKey).setBundle(viewStateManager.createBundle(currentKey, currentView, dialog));
   }
 
   private Object getCurrentKey() {
     return traversal.destination.top();
   }
 
-  public Object initViewState(Object key) {
-    return bundleable.initViewState(getState(key));
+  public Object initialViewState(Object key) {
+    return viewStateManager.initialViewState(getState(key));
   }
 
   public void saveOutgoingState(
       State outgoingState, @Nullable View outgoingView, @Nullable Dialog dialog) {
-    if (bundleable == null) return;
-    outgoingState.setBundle(bundleable.createBundle(outgoingState.getKey(), outgoingView, dialog));
+    if (viewStateManager == null) return;
+    outgoingState.setBundle(viewStateManager.createBundle(outgoingState.getKey(), outgoingView, dialog));
   }
 
   @Nullable

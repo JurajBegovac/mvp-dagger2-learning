@@ -4,11 +4,10 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
-import beg.hr.mvpdagger.MyBundleable;
+import beg.hr.mvpdagger.MyViewStateManager;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.di.dagger2.modules.ApplicationModule;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ApplicationContext;
-import beg.hr.mvpdagger.util.mvp.Bundleable;
 import dagger.Component;
 
 /** Created by juraj on 27/06/16. */
@@ -20,5 +19,5 @@ public interface ApplicationComponent {
 
   ActivityComponent plus(ActivityModule module);
 
-  MyBundleable bundleable();
+  MyViewStateManager viewStateManager();
 }

@@ -13,7 +13,7 @@ import beg.hr.mvpdagger.flow_test_2.BottomTopActivity;
 import beg.hr.mvpdagger.home.HomeScreen;
 import beg.hr.mvpdagger.screen_1.Screen1;
 import beg.hr.mvpdagger.screen_2.Screen2;
-import beg.hr.mvpdagger.util.mvp.Bundleable;
+import beg.hr.mvpdagger.util.mvp.ViewStateManager;
 import beg.hr.mvpdagger.util.mvp.FlowActivity;
 import flow.Direction;
 import flow.Flow;
@@ -35,8 +35,8 @@ public class MainActivity extends FlowActivity {
   }
 
   @Override
-  protected Bundleable bundleable() {
-    return MvpDaggerApplication.component().bundleable();
+  protected ViewStateManager viewStateManager() {
+    return MvpDaggerApplication.component().viewStateManager();
   }
 
   @Override
@@ -73,7 +73,7 @@ public class MainActivity extends FlowActivity {
       mainKeyToDialogKey(mainKey, callback);
       //      view =
       //          ((Screen1) mainKey)
-      //              .component(component, (Screen1.State) initViewState(mainKey))
+      //              .component(component, (Screen1.State) initialViewState(mainKey))
       //              .mvp()
       //              .view();
     } else if (mainKey.equals(BottomTopActivity.KEY)) {

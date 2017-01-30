@@ -11,19 +11,19 @@ import beg.hr.mvpdagger.home.HomeScreen;
 import beg.hr.mvpdagger.home.HomeView;
 import beg.hr.mvpdagger.screen_1.Screen1;
 import beg.hr.mvpdagger.screen_1.View1;
-import beg.hr.mvpdagger.util.mvp.Bundleable;
 import beg.hr.mvpdagger.util.mvp.DialogKey;
+import beg.hr.mvpdagger.util.mvp.ViewStateManager;
 import flow.State;
 
 /**
- * Custom implementation of Bundleable
+ * Custom implementation of ViewStateManager
  *
  * <p>Created by juraj on 19/01/2017.
  */
-public class MyBundleable implements Bundleable {
+public class MyViewStateManager implements ViewStateManager {
 
   @Inject
-  public MyBundleable() {}
+  public MyViewStateManager() {}
 
   @Override
   public Bundle createBundle(Object key, @Nullable View view, @Nullable Dialog dialog) {
@@ -45,7 +45,7 @@ public class MyBundleable implements Bundleable {
   }
 
   @Override
-  public Object initViewState(State state) {
+  public Object initialViewState(State state) {
     Object key = state.getKey();
     Bundle bundle = state.getBundle();
     if (key instanceof HomeScreen) {
