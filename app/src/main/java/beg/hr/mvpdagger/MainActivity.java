@@ -47,7 +47,7 @@ public class MainActivity extends FlowActivity {
           new AlertDialog.Builder(this)
               .setView(
                   ((Screen1) dialogKey)
-                      .component(component, (Screen1.State) initViewState(dialogKey))
+                      .component(component, (Screen1.State) initialViewState(dialogKey))
                       .mvp()
                       .view())
               .setOnCancelListener(dialog1 -> Flow.get(this).goBack())
@@ -66,7 +66,7 @@ public class MainActivity extends FlowActivity {
     if (mainKey instanceof HomeScreen) {
       view =
           ((HomeScreen) mainKey)
-              .component(component, (HomeScreen.State) initViewState(mainKey))
+              .component(component, (HomeScreen.State) initialViewState(mainKey))
               .mvp()
               .view();
     } else if (mainKey instanceof Screen1) {

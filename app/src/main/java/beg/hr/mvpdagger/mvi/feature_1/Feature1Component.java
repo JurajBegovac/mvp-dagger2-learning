@@ -1,6 +1,7 @@
 package beg.hr.mvpdagger.mvi.feature_1;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
@@ -44,6 +45,15 @@ public class Feature1Component extends ViewDriverComponent<Feature1ViewDriver> i
   @Override
   public Observable<Event> events(String type) {
     return driver().bind(type);
+  }
+
+  @Override
+  public Bundle saveState() {
+    State state = driver().currentState();
+    if (state == null) return Bundle.EMPTY;
+    Bundle bundle = new Bundle();
+    bundle.putParcelable(State.TAG, state);
+    return bundle;
   }
 
   private void onAttach(ViewAttachEvent e) {

@@ -68,6 +68,10 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
     return diff;
   }
 
+  public State currentState() {
+    return currentState;
+  }
+
   private static class Binder {
     @NonNull
     static Observable<Event> bind(Feature1View view, String type) {

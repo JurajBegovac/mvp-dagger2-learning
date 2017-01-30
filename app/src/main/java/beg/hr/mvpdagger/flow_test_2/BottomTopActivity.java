@@ -68,13 +68,13 @@ public class BottomTopActivity extends FlowActivity {
     if (mainKey instanceof HomeScreen) {
       view =
           ((HomeScreen) mainKey)
-              .component(component, (HomeScreen.State) initViewState(mainKey))
+              .component(component, (HomeScreen.State) initialViewState(mainKey))
               .mvp()
               .view();
     } else if (mainKey instanceof Screen1) {
       view =
           ((Screen1) mainKey)
-              .component(component, (Screen1.State) initViewState(mainKey))
+              .component(component, (Screen1.State) initialViewState(mainKey))
               .mvp()
               .view();
     } else if (mainKey instanceof Screen2) {

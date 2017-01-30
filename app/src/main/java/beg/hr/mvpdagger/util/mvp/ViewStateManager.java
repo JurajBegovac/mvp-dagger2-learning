@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import flow.State;
-
 /**
  * Use this for storing state of current view / dialog when configuration changes, android kills
  * process etc.
@@ -14,7 +12,11 @@ import flow.State;
  * <p>Created by juraj on 19/01/2017.
  */
 public interface ViewStateManager {
+  // todo remove this method
+  @Deprecated
   Bundle createBundle(Object key, @Nullable View view, @Nullable Dialog dialog);
 
-  Object initialViewState(State state);
+  Bundle createBundle();
+
+  Object initialViewState(Object key, Bundle bundle);
 }

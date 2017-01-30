@@ -13,7 +13,6 @@ import beg.hr.mvpdagger.screen_1.Screen1;
 import beg.hr.mvpdagger.screen_1.View1;
 import beg.hr.mvpdagger.util.mvp.DialogKey;
 import beg.hr.mvpdagger.util.mvp.ViewStateManager;
-import flow.State;
 
 /**
  * Custom implementation of ViewStateManager
@@ -45,9 +44,13 @@ public class MyViewStateManager implements ViewStateManager {
   }
 
   @Override
-  public Object initialViewState(State state) {
-    Object key = state.getKey();
-    Bundle bundle = state.getBundle();
+  public Bundle createBundle() {
+    // TODO: 30/01/2017 Implement this
+    return Bundle.EMPTY;
+  }
+
+  @Override
+  public Object initialViewState(Object key, Bundle bundle) {
     if (key instanceof HomeScreen) {
       if (bundle != null && bundle.containsKey(HomeScreen.State.KEY)) {
         return bundle.getParcelable(HomeScreen.State.KEY);

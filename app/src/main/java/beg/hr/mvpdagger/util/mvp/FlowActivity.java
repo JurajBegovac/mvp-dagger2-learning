@@ -36,8 +36,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
-  protected BaseDispatcher flowDispatcher;
-
+  private BaseDispatcher flowDispatcher;
   private Dialog dialog;
 
   protected abstract Object initScreen();
@@ -73,7 +72,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    flowDispatcher.saveCurrentState(getCurrentView(), dialog);
+    flowDispatcher.saveCurrentState();
     super.onSaveInstanceState(outState);
   }
 
@@ -93,7 +92,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       @NonNull Map<Object, Context> incomingContexts,
       @NonNull TraversalCallback callback) {
     if (outgoingState != null) {
-      flowDispatcher.saveOutgoingState(outgoingState, getCurrentView(), dialog);
+      flowDispatcher.saveState(outgoingState);
     }
 
     Object inKey = incomingState.getKey();
@@ -225,7 +224,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     }
   }
 
-  protected Object initViewState(Object key) {
+  protected Object initialViewState(Object key) {
     return flowDispatcher.initialViewState(key);
   }
 }

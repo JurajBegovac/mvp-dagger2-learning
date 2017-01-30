@@ -1,11 +1,9 @@
 package beg.hr.mvpdagger.util.mvp;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 
 import java.util.Map;
 
@@ -22,20 +20,21 @@ import flow.TraversalCallback;
  *
  * <p>Created by juraj on 18/01/2017.
  */
-public class BaseDispatcher implements Dispatcher, KeyChanger {
+class BaseDispatcher implements Dispatcher, KeyChanger {
   private final KeyDispatcher keyDispatcher;
   private final KeyChanger keyChanger;
   private final ViewStateManager viewStateManager;
 
   private Traversal traversal;
 
-  public BaseDispatcher(Activity activity, KeyChanger keyChanger, @Nullable ViewStateManager viewStateManager) {
+  BaseDispatcher(
+      Activity activity, KeyChanger keyChanger, @Nullable ViewStateManager viewStateManager) {
     this.keyChanger = keyChanger;
     this.keyDispatcher = (KeyDispatcher) KeyDispatcher.configure(activity, this).build();
     this.viewStateManager = viewStateManager;
   }
 
-  public State getState(Object key) {
+  private State getState(Object key) {
     return traversal.getState(key);
   }
 
@@ -55,28 +54,26 @@ public class BaseDispatcher implements Dispatcher, KeyChanger {
     keyChanger.changeKey(outgoingState, incomingState, direction, incomingContexts, callback);
   }
 
-  public void saveCurrentState(@Nullable View currentView, @Nullable Dialog dialog) {
+  void saveCurrentState() {
     if (viewStateManager == null) return;
-    Object currentKey = getCurrentKey();
-    getState(currentKey).setBundle(viewStateManager.createBundle(currentKey, currentView, dialog));
+    saveState(getState(getCurrentKey()));
   }
 
   private Object getCurrentKey() {
     return traversal.destination.top();
   }
 
-  public Object initialViewState(Object key) {
-    return viewStateManager.initialViewState(getState(key));
+  Object initialViewState(Object key) {
+    return viewStateManager.initialViewState(key, getState(key).getBundle());
   }
 
-  public void saveOutgoingState(
-      State outgoingState, @Nullable View outgoingView, @Nullable Dialog dialog) {
+  void saveState(State state) {
     if (viewStateManager == null) return;
-    outgoingState.setBundle(viewStateManager.createBundle(outgoingState.getKey(), outgoingView, dialog));
+    state.setBundle(viewStateManager.createBundle());
   }
 
   @Nullable
-  public State getOutgoingState() {
+  State getOutgoingState() {
     return traversal.origin == null ? null : traversal.getState(traversal.origin.top());
   }
 }
