@@ -51,6 +51,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
     boolean[] diff = diff(currentState, state);
     render(diff, state);
     currentState = state;
+    view().setTag(currentState);
   }
 
   private void render(boolean[] diff, State state) {
@@ -75,6 +76,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
         return RxView.clicks(view.getButton()).map(e -> builder.type(TYPE_BUTTON_PRESSED).build());
       if (TYPE_TEXT_CHANGED.equals(type))
         return RxTextView.textChanges(view.getTextInput())
+            .skip(1) // FIXME: 30/01/2017 not working without this on orientation changes
             .map(
                 text ->
                     builder
@@ -87,6 +89,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
 
   @AutoValue
   public abstract static class State implements Parcelable {
+    public static final String TAG = "state:feature1";
     public static final String TEXT = "text";
 
     public static State defaultState() {

@@ -1,6 +1,7 @@
 package beg.hr.mvpdagger.mvi.feature_1;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.jakewharton.rxbinding.view.ViewAttachEvent;
@@ -24,19 +25,20 @@ import rx.android.schedulers.AndroidSchedulers;
 public class Feature1Component extends ViewDriverComponent<Feature1ViewDriver> implements Input {
 
   private final Feature1Model model;
+  private final State initState;
 
   @Inject
-  public Feature1Component(Feature1ViewDriver driver, Feature1Model model) {
+  public Feature1Component(State initState, Feature1ViewDriver driver, Feature1Model model) {
     super(driver);
     this.model = model;
+    this.initState = initState;
 
     driver.lifecycle().filter(driver::isAttach).subscribe(this::onAttach);
   }
 
   @Override
   public State initState() {
-    // TODO: 26/01/2017 get state from Flow (save instance state)
-    return State.defaultState();
+    return initState;
   }
 
   @Override
@@ -65,6 +67,18 @@ public class Feature1Component extends ViewDriverComponent<Feature1ViewDriver> i
 
   @dagger.Module
   public static class Module {
+
+    private final State initState;
+
+    public Module(@Nullable State initState) {
+      this.initState = initState;
+    }
+
+    @PerScreen
+    @Provides
+    public State initState() {
+      return initState;
+    }
 
     @PerScreen
     @Provides
