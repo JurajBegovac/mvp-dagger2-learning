@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package beg.hr.mvpdagger.util.mvp;
+package beg.hr.mvpdagger.util.flow;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;

@@ -1,10 +1,11 @@
-package beg.hr.mvpdagger.util.mvp;
+package beg.hr.mvpdagger.util.flow;
 
 import com.google.gson.Gson;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,8 +19,7 @@ import android.widget.TextView;
 import java.util.Map;
 
 import beg.hr.mvpdagger.R;
-import beg.hr.mvpdagger.flow_test_2.BottomTopActivity;
-import beg.hr.mvpdagger.screen_1.Screen1;
+import beg.hr.mvpdagger.util.BottomTopActivity;
 import flow.Direction;
 import flow.Flow;
 import flow.History;
@@ -32,7 +32,7 @@ import static flow.Direction.REPLACE;
 
 /** Created by juraj on 19/01/2017. */
 public abstract class FlowActivity extends AppCompatActivity
-    implements KeyChanger, ViewStateManager2 {
+    implements KeyChanger {
 
   protected static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
@@ -75,17 +75,6 @@ public abstract class FlowActivity extends AppCompatActivity
     if (!BackSupport.onBackPressed(view)) {
       super.onBackPressed();
     }
-  }
-
-  @Nullable
-  @Override
-  public Bundle getBundle(Object key) {
-    return flowDispatcher.getBundle(key);
-  }
-
-  @Override
-  public void saveState(Object key, Bundle bundle) {
-    flowDispatcher.save(key, bundle);
   }
 
   @Override
@@ -190,12 +179,13 @@ public abstract class FlowActivity extends AppCompatActivity
     this.dialog.show();
   }
 
-  protected void startAnotherFlow(TraversalCallback callback) {
+  protected void startAnotherFlow(TraversalCallback callback, Parcelable initScreen) {
     callback.onTraversalCompleted();
     Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
     historyBuilder.pop();
     Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
-    startActivity(BottomTopActivity.getStartIntent(this, Screen1.create()));
+
+    startActivity(BottomTopActivity.getStartIntent(this, initScreen));
     overridePendingTransition(R.anim.slide_in_bottom, R.anim.nothing);
   }
 
@@ -222,5 +212,20 @@ public abstract class FlowActivity extends AppCompatActivity
       default:
         // noop
     }
+  }
+
+  protected ViewStateManager viewStateManager(Object key) {
+    return new ViewStateManager() {
+      @Nullable
+      @Override
+      public Bundle getInitState() {
+        return flowDispatcher.getBundle(key);
+      }
+
+      @Override
+      public void saveState(Bundle bundle) {
+        flowDispatcher.save(key, bundle);
+      }
+    };
   }
 }

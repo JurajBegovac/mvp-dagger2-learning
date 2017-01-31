@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<beg.hr.mvpdagger.mvi.feature_1.Feature1View
-        xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-        android:layout_width="match_parent" android:layout_height="match_parent">
+<beg.hr.mvpdagger.feature_1.component_1.Component1View
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Button" android:id="@+id/btn" />
+    <Button android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            android:id="@+id/btn" />
 
-    <EditText android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:id="@+id/et" android:textSize="24sp" android:hint="Add text" />
+    <EditText android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et"
+            android:textSize="24sp"
+            android:hint="Add text" />
 
-</beg.hr.mvpdagger.mvi.feature_1.Feature1View>
+</beg.hr.mvpdagger.feature_1.component_1.Component1View>

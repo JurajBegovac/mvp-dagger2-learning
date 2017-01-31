@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package beg.hr.mvpdagger.util.mvp;
+package beg.hr.mvpdagger.util.flow;
 
 /**
  * Implemented by views that want the option to intercept back button taps. If a view has subviews

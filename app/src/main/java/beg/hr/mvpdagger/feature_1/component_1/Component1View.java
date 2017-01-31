@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.mvi.feature_1;
+package beg.hr.mvpdagger.feature_1.component_1;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -12,7 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /** Created by juraj on 26/01/2017. */
-public class Feature1View extends LinearLayout {
+public class Component1View extends LinearLayout {
 
   @BindView(R.id.btn)
   Button btn;
@@ -20,15 +20,15 @@ public class Feature1View extends LinearLayout {
   @BindView(R.id.et)
   EditText et;
 
-  public Feature1View(Context context) {
+  public Component1View(Context context) {
     this(context, null);
   }
 
-  public Feature1View(Context context, AttributeSet attrs) {
+  public Component1View(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public Feature1View(Context context, AttributeSet attrs, int defStyleAttr) {
+  public Component1View(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 

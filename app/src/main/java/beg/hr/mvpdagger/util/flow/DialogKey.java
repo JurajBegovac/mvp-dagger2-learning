@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.util.mvp;
+package beg.hr.mvpdagger.util.flow;
 
 import android.support.annotation.NonNull;
 

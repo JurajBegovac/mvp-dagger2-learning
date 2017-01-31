@@ -4,7 +4,6 @@ import android.content.Context;
 
 import javax.inject.Singleton;
 
-import beg.hr.mvpdagger.MyViewStateManager;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.di.dagger2.modules.ApplicationModule;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ApplicationContext;
@@ -18,6 +17,4 @@ public interface ApplicationComponent {
   Context context();
 
   ActivityComponent plus(ActivityModule module);
-
-  MyViewStateManager viewStateManager();
 }

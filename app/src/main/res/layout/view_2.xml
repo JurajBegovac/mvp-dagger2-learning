@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<beg.hr.mvpdagger.screen_2.View2 xmlns:android="http://schemas.android.com/apk/res/android"
+<beg.hr.mvpdagger.feature_2.View2 xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,4 +16,4 @@
             android:text="Go back"
             android:layout_height="wrap_content" />
 
-</beg.hr.mvpdagger.screen_2.View2>
+</beg.hr.mvpdagger.feature_2.View2>

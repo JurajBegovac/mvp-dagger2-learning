@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.mvi.feature_1;
+package beg.hr.mvpdagger.feature_1.component_1;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableMap;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver.State;
+import beg.hr.mvpdagger.feature_1.component_1.Component1ViewDriver.State;
 import beg.hr.mvpdagger.util.view.Event;
 import beg.hr.mvpdagger.util.view.Event.Builder;
 import beg.hr.mvpdagger.util.view.ViewDriver;
@@ -22,9 +22,9 @@ import flow.Flow;
 import rx.Observable;
 
 /** Created by juraj on 26/01/2017. */
-public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
+public class Component1ViewDriver extends ViewDriver<Component1View, State> {
 
-  public static final String BASE = "view:feature1:";
+  public static final String BASE = "view:component1:";
   public static final String TYPE_BUTTON_PRESSED = BASE + "button_pressed";
   public static final String TYPE_TEXT_CHANGED = BASE + "text_changed";
 
@@ -34,7 +34,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
   private Observable<Event> events;
 
   @Inject
-  public Feature1ViewDriver(Feature1View view) {
+  public Component1ViewDriver(Component1View view) {
     super(view);
     events =
         Observable.merge(
@@ -52,7 +52,6 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
     boolean[] diff = diff(currentState, state);
     render(diff, state);
     currentState = state;
-    view().setTag(currentState);
   }
 
   private void render(boolean[] diff, State state) {
@@ -74,14 +73,14 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
   }
 
   public void goTo(Object o) {
-    // TODO: 31/01/2017 this is just for testing, remove it
+    // TODO: 31/01/2017 this is just for testing, remove it and move this to some NavigationFactory
     Flow.get(view()).set(o);
   }
 
   private static class Binder {
     @NonNull
-    static Observable<Event> bind(Feature1View view, String type) {
-      Builder builder = Event.builder().origin("feature1_view_driver");
+    static Observable<Event> bind(Component1View view, String type) {
+      Builder builder = Event.builder().origin("component1_view_driver");
       if (TYPE_BUTTON_PRESSED.equals(type))
         return RxView.clicks(view.getButton()).map(e -> builder.type(TYPE_BUTTON_PRESSED).build());
       if (TYPE_TEXT_CHANGED.equals(type))
@@ -99,7 +98,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
 
   @AutoValue
   public abstract static class State implements Parcelable {
-    public static final String TAG = "state:feature1";
+    public static final String TAG = "state:component1";
     public static final String TEXT = "text";
 
     public static State defaultState() {
@@ -107,7 +106,7 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
     }
 
     public static State create(String text) {
-      return new AutoValue_Feature1ViewDriver_State(text);
+      return new AutoValue_Component1ViewDriver_State(text);
     }
 
     public abstract String text();

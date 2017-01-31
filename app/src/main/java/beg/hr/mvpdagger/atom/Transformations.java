@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.mvi.atom;
+package beg.hr.mvpdagger.atom;
 
 import com.google.common.base.Function;
 

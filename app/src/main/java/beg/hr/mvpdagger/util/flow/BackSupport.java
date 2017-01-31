@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package beg.hr.mvpdagger.util.mvp;
+package beg.hr.mvpdagger.util.flow;
 
 import android.view.View;
 

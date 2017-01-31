@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<beg.hr.mvpdagger.screen_1.View1 xmlns:android="http://schemas.android.com/apk/res/android"
+<beg.hr.mvpdagger.feature_1.component_2.Component2View xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:background="@android:color/white"
         android:orientation="vertical"
@@ -25,4 +25,4 @@
             android:layout_width="wrap_content"
             android:text="Start dialog"
             android:layout_height="wrap_content" />
-</beg.hr.mvpdagger.screen_1.View1>
+</beg.hr.mvpdagger.feature_1.component_2.Component2View>

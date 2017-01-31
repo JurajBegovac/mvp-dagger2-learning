@@ -1,22 +1,20 @@
-package beg.hr.mvpdagger.mvi;
+package beg.hr.mvpdagger.feature_1;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import beg.hr.mvpdagger.util.mvp.FlowActivity;
-import beg.hr.mvpdagger.util.mvp.ViewStateManager2;
+import beg.hr.mvpdagger.util.flow.FlowActivity;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
 import flow.TraversalCallback;
 
-import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT;
+import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 
-public class Feature1Flow extends FlowActivity implements ViewStateManager2 {
+public class Feature1Flow extends FlowActivity {
 
   public static final String DUMMY_KEY = "dummy_key";
   private ViewComponentFactory viewComponentFactory;
@@ -33,32 +31,8 @@ public class Feature1Flow extends FlowActivity implements ViewStateManager2 {
 
   @Override
   protected Object initScreen() {
-    return FEATURE1_COMPONENT;
+    return FEATURE1_COMPONENT1;
   }
-
-  //  @Nullable
-  //  @Override
-  //  protected ViewStateManager viewStateManager() {
-  //    return new ViewStateManager() {
-  //      @Override
-  //      public Bundle createBundle(Object key, @Nullable View view, @Nullable Dialog dialog) {
-  //        // deprecated
-  //        if (viewComponent == null) return Bundle.EMPTY;
-  //        return viewComponent.saveState();
-  //      }
-  //
-  //      @Override
-  //      public Bundle createBundle() {
-  //        if (viewComponent == null) return Bundle.EMPTY;
-  //        return viewComponent.saveState();
-  //      }
-  //
-  //      @Override
-  //      public Object initialViewState(Object key, Bundle bundle) {
-  //        return Feature1InitialViewStateFactory.state(key, bundle);
-  //      }
-  //    };
-  //  }
 
   @Override
   protected void changeDialogKey(Object dialogKey) {}
@@ -66,7 +40,7 @@ public class Feature1Flow extends FlowActivity implements ViewStateManager2 {
   @Override
   protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
     View view = null;
-    ViewComponent viewComponent = viewComponentFactory.create(mainKey, this);
+    ViewComponent viewComponent = viewComponentFactory.create(mainKey, viewStateManager(mainKey));
     if (viewComponent != null) view = viewComponent.view();
     else if (mainKey.equals(DUMMY_KEY)) {
       view = new TextView(this);
