@@ -2,10 +2,14 @@ package beg.hr.mvpdagger.mvi.feature_1;
 
 import javax.inject.Inject;
 
+import beg.hr.mvpdagger.mvi.Feature1Flow;
 import beg.hr.mvpdagger.mvi.atom.Transformations.Transform;
 import beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver.State;
 import beg.hr.mvpdagger.util.view.Event;
 import rx.Observable;
+
+import static beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver.TYPE_BUTTON_PRESSED;
+import static beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver.TYPE_TEXT_CHANGED;
 
 /** Created by juraj on 26/01/2017. */
 public class Feature1Model {
@@ -23,8 +27,9 @@ public class Feature1Model {
 
       @Override
       public Observable<Object> navigation() {
+
         // TODO: 26/01/2017
-        return null;
+        return input.events(TYPE_BUTTON_PRESSED).map(event -> Feature1Flow.DUMMY_KEY);
       }
     };
   }
@@ -32,7 +37,7 @@ public class Feature1Model {
   private Observable<State> getState(Input input) {
     Observable<Transform<State>> textReducers =
         input
-            .events(Feature1ViewDriver.TYPE_TEXT_CHANGED)
+            .events(TYPE_TEXT_CHANGED)
             .distinctUntilChanged()
             .map(event -> event.data().get(State.TEXT))
             .cast(String.class)

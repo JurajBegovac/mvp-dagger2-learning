@@ -18,6 +18,7 @@ import beg.hr.mvpdagger.mvi.feature_1.Feature1ViewDriver.State;
 import beg.hr.mvpdagger.util.view.Event;
 import beg.hr.mvpdagger.util.view.Event.Builder;
 import beg.hr.mvpdagger.util.view.ViewDriver;
+import flow.Flow;
 import rx.Observable;
 
 /** Created by juraj on 26/01/2017. */
@@ -70,6 +71,11 @@ public class Feature1ViewDriver extends ViewDriver<Feature1View, State> {
 
   public State currentState() {
     return currentState;
+  }
+
+  public void goTo(Object o) {
+    // TODO: 31/01/2017 this is just for testing, remove it
+    Flow.get(view()).set(o);
   }
 
   private static class Binder {

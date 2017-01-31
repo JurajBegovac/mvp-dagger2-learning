@@ -34,41 +34,41 @@ public class MainActivity extends FlowActivity {
     return HomeScreen.create();
   }
 
-  @Override
-  protected ViewStateManager viewStateManager() {
-    return MvpDaggerApplication.component().viewStateManager();
-  }
+//  @Override
+//  protected ViewStateManager viewStateManager() {
+//    return MvpDaggerApplication.component().viewStateManager();
+//  }
 
   @Override
   protected void changeDialogKey(Object dialogKey) {
-    Dialog dialog = null;
-    if (dialogKey instanceof Screen1) {
-      dialog =
-          new AlertDialog.Builder(this)
-              .setView(
-                  ((Screen1) dialogKey)
-                      .component(component, (Screen1.State) initialViewState(dialogKey))
-                      .mvp()
-                      .view())
-              .setOnCancelListener(dialog1 -> Flow.get(this).goBack())
-              .create();
-    } else if (dialogKey instanceof Screen2) {
-      dialog = new BottomSheetDialog(this);
-      dialog.setContentView(((Screen2) dialogKey).component(component).mvp().view());
-      dialog.setOnCancelListener(dialog1 -> Flow.get(this).goBack());
-    }
-    if (dialog != null) showDialog(dialog);
+//    Dialog dialog = null;
+//    if (dialogKey instanceof Screen1) {
+//      dialog =
+//          new AlertDialog.Builder(this)
+//              .setView(
+//                  ((Screen1) dialogKey)
+//                      .component(component, (Screen1.State) initialViewState(dialogKey))
+//                      .mvp()
+//                      .view())
+//              .setOnCancelListener(dialog1 -> Flow.get(this).goBack())
+//              .create();
+//    } else if (dialogKey instanceof Screen2) {
+//      dialog = new BottomSheetDialog(this);
+//      dialog.setContentView(((Screen2) dialogKey).component(component).mvp().view());
+//      dialog.setOnCancelListener(dialog1 -> Flow.get(this).goBack());
+//    }
+//    if (dialog != null) showDialog(dialog);
   }
 
   @Override
   protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
     View view = null;
     if (mainKey instanceof HomeScreen) {
-      view =
-          ((HomeScreen) mainKey)
-              .component(component, (HomeScreen.State) initialViewState(mainKey))
-              .mvp()
-              .view();
+//      view =
+//          ((HomeScreen) mainKey)
+//              .component(component, (HomeScreen.State) initialViewState(mainKey))
+//              .mvp()
+//              .view();
     } else if (mainKey instanceof Screen1) {
       mainKeyToDialogKey(mainKey, callback);
       //      view =

@@ -46,10 +46,10 @@ public class BottomTopActivity extends FlowActivity {
     return getIntent().getParcelableExtra(INIT_SCREEN);
   }
 
-  @Override
-  protected ViewStateManager viewStateManager() {
-    return MvpDaggerApplication.component().viewStateManager();
-  }
+//  @Override
+//  protected ViewStateManager viewStateManager() {
+//    return MvpDaggerApplication.component().viewStateManager();
+//  }
 
   @Override
   protected void changeDialogKey(Object dialogKey) {
@@ -66,17 +66,17 @@ public class BottomTopActivity extends FlowActivity {
   protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
     View view = null;
     if (mainKey instanceof HomeScreen) {
-      view =
-          ((HomeScreen) mainKey)
-              .component(component, (HomeScreen.State) initialViewState(mainKey))
-              .mvp()
-              .view();
+//      view =
+//          ((HomeScreen) mainKey)
+//              .component(component, (HomeScreen.State) initialViewState(mainKey))
+//              .mvp()
+//              .view();
     } else if (mainKey instanceof Screen1) {
-      view =
-          ((Screen1) mainKey)
-              .component(component, (Screen1.State) initialViewState(mainKey))
-              .mvp()
-              .view();
+//      view =
+//          ((Screen1) mainKey)
+//              .component(component, (Screen1.State) initialViewState(mainKey))
+//              .mvp()
+//              .view();
     } else if (mainKey instanceof Screen2) {
       mainKeyToDialogKey(mainKey, callback);
     }

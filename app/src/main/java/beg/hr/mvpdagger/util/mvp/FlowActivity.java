@@ -31,18 +31,17 @@ import flow.TraversalCallback;
 import static flow.Direction.REPLACE;
 
 /** Created by juraj on 19/01/2017. */
-public abstract class FlowActivity extends AppCompatActivity implements KeyChanger {
+public abstract class FlowActivity extends AppCompatActivity
+    implements KeyChanger, ViewStateManager2 {
 
   protected static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
-  private BaseDispatcher flowDispatcher;
+  protected BaseDispatcher flowDispatcher;
+
   private Dialog dialog;
 
   protected abstract Object initScreen();
-
-  @Nullable
-  protected abstract ViewStateManager viewStateManager();
 
   protected abstract void changeDialogKey(Object dialogKey);
 
@@ -51,7 +50,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
 
   @Override
   protected void attachBaseContext(Context newBase) {
-    flowDispatcher = new BaseDispatcher(this, this, viewStateManager());
+    flowDispatcher = new BaseDispatcher(this, this);
     newBase =
         Flow.configure(newBase, this)
             .dispatcher(flowDispatcher)
@@ -71,17 +70,22 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    flowDispatcher.saveCurrentState();
-    super.onSaveInstanceState(outState);
-  }
-
-  @Override
   public void onBackPressed() {
     final View view = getCurrentView();
     if (!BackSupport.onBackPressed(view)) {
       super.onBackPressed();
     }
+  }
+
+  @Nullable
+  @Override
+  public Bundle getBundle(Object key) {
+    return flowDispatcher.getBundle(key);
+  }
+
+  @Override
+  public void saveState(Object key, Bundle bundle) {
+    flowDispatcher.save(key, bundle);
   }
 
   @Override
@@ -91,10 +95,6 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       @NonNull Direction direction,
       @NonNull Map<Object, Context> incomingContexts,
       @NonNull TraversalCallback callback) {
-    if (outgoingState != null) {
-      flowDispatcher.saveState(outgoingState);
-    }
-
     Object inKey = incomingState.getKey();
     Object mainKey;
     Object dialogKey;
@@ -222,9 +222,5 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       default:
         // noop
     }
-  }
-
-  protected Object initialViewState(Object key) {
-    return flowDispatcher.initialViewState(key);
   }
 }
