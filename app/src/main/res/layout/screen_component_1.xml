@@ -11,9 +11,9 @@
             android:id="@+id/btn" />
 
     <EditText android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et"
-            android:textSize="24sp"
-            android:hint="Add text" />
+              android:layout_height="wrap_content"
+              android:id="@+id/et"
+              android:textSize="24sp"
+              android:hint="Add text" />
 
 </beg.hr.mvpdagger.feature_1.component_1.Component1View>

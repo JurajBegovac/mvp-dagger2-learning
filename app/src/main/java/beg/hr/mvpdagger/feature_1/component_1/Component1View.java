@@ -15,10 +15,10 @@ import butterknife.ButterKnife;
 public class Component1View extends LinearLayout {
 
   @BindView(R.id.btn)
-  Button btn;
+  public Button btn;
 
   @BindView(R.id.et)
-  EditText et;
+  public EditText et;
 
   public Component1View(Context context) {
     this(context, null);
@@ -39,8 +39,8 @@ public class Component1View extends LinearLayout {
   }
 
   public void setText(String text) {
+    if (text.equals(et.getText().toString())) return;
     et.setText(text);
-    et.setSelection(text.length());
   }
 
   public Button getButton() {

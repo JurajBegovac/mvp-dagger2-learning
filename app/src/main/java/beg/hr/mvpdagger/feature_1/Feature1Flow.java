@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import beg.hr.mvpdagger.MvpDaggerApplication;
+import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.util.flow.FlowActivity;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
 import flow.TraversalCallback;
 
-import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
+import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE_COMPONENT;
 
 public class Feature1Flow extends FlowActivity {
 
@@ -25,13 +27,14 @@ public class Feature1Flow extends FlowActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    viewComponentFactory = new ViewComponentFactory(this);
+    viewComponentFactory =
+        MvpDaggerApplication.component().plus(new ActivityModule(this)).viewComponentFactory();
     super.onCreate(savedInstanceState);
   }
 
   @Override
   protected Object initScreen() {
-    return FEATURE1_COMPONENT1;
+    return FEATURE1_COMPOSITE_COMPONENT;
   }
 
   @Override
@@ -40,7 +43,8 @@ public class Feature1Flow extends FlowActivity {
   @Override
   protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
     View view = null;
-    ViewComponent viewComponent = viewComponentFactory.create(mainKey, viewStateManager(mainKey));
+    ViewComponent viewComponent =
+        viewComponentFactory.create(mainKey, null, viewStateManager(mainKey));
     if (viewComponent != null) view = viewComponent.view();
     else if (mainKey.equals(DUMMY_KEY)) {
       view = new TextView(this);

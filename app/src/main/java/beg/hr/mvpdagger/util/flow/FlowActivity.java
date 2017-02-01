@@ -31,8 +31,7 @@ import flow.TraversalCallback;
 import static flow.Direction.REPLACE;
 
 /** Created by juraj on 19/01/2017. */
-public abstract class FlowActivity extends AppCompatActivity
-    implements KeyChanger {
+public abstract class FlowActivity extends AppCompatActivity implements KeyChanger {
 
   protected static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
@@ -214,18 +213,7 @@ public abstract class FlowActivity extends AppCompatActivity
     }
   }
 
-  protected ViewStateManager viewStateManager(Object key) {
-    return new ViewStateManager() {
-      @Nullable
-      @Override
-      public Bundle getInitState() {
-        return flowDispatcher.getBundle(key);
-      }
-
-      @Override
-      public void saveState(Bundle bundle) {
-        flowDispatcher.save(key, bundle);
-      }
-    };
+  protected ViewState viewStateManager(Object key) {
+    return new FlowViewState(key, flowDispatcher);
   }
 }

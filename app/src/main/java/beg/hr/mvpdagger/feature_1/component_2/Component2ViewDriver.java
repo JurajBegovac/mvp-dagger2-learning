@@ -10,6 +10,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -96,6 +97,7 @@ public class Component2ViewDriver extends ViewDriver<Component2View, State> {
       if (TYPE_TEXT_CHANGED.equals(type))
         return RxTextView.textChanges(view.editText)
             .skip(1) // FIXME: 30/01/2017 not working without this on orientation changes
+            .debounce(50, TimeUnit.MILLISECONDS)
             .map(
                 text ->
                     builder

@@ -41,7 +41,8 @@ public class Component2View extends LinearLayout {
   }
 
   public void setText(String text) {
+    if (text.equals(editText.getText().toString())) return;
     editText.setText(text);
-    editText.setSelection(text.length());
+    //    editText.setSelection(text.length());
   }
 }

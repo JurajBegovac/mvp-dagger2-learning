@@ -7,6 +7,9 @@ import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
 import beg.hr.mvpdagger.feature_1.component_1.Component1ViewComponent;
 import beg.hr.mvpdagger.feature_1.component_2.Component2ViewComponent;
+import beg.hr.mvpdagger.feature_1.composite_component.CompositeViewComponent;
+import beg.hr.mvpdagger.feature_1.composite_component.CompositeViewComponent.ObjectGraph;
+import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import dagger.Subcomponent;
 
 /** Created by juraj on 16/07/16. */
@@ -19,4 +22,8 @@ public interface ActivityComponent {
   Component1ViewComponent.ObjectGraph plus(Component1ViewComponent.Module module);
 
   Component2ViewComponent.ObjectGraph plus(Component2ViewComponent.Module module);
+
+  ViewComponentFactory viewComponentFactory();
+
+  ObjectGraph plus(CompositeViewComponent.Module module);
 }

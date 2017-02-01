@@ -14,7 +14,7 @@ import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
 import beg.hr.mvpdagger.feature_1.component_1.Component1Model.Input;
 import beg.hr.mvpdagger.feature_1.component_1.Component1Model.Output;
 import beg.hr.mvpdagger.feature_1.component_1.Component1ViewDriver.State;
-import beg.hr.mvpdagger.util.flow.ViewStateManager;
+import beg.hr.mvpdagger.util.flow.ViewState;
 import beg.hr.mvpdagger.util.view.Event;
 import beg.hr.mvpdagger.util.view.ViewDriverComponent;
 import dagger.Provides;
@@ -27,14 +27,14 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
     implements Input {
 
   private final Component1Model model;
-  private final ViewStateManager viewStateManager;
+  private final ViewState viewState;
 
   @Inject
   public Component1ViewComponent(
-      ViewStateManager viewStateManager, Component1ViewDriver driver, Component1Model model) {
+      ViewState viewState, Component1ViewDriver driver, Component1Model model) {
     super(driver);
     this.model = model;
-    this.viewStateManager = viewStateManager;
+    this.viewState = viewState;
 
     driver.lifecycle().filter(driver::isAttach).subscribe(this::onAttach);
     driver.lifecycle().filter(driver::isDetach).subscribe(this::onDetach);
@@ -42,7 +42,7 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
 
   @Override
   public State initState() {
-    Bundle bundle = viewStateManager.getInitState();
+    Bundle bundle = viewState.get();
     if (bundle != null && bundle.containsKey(State.TAG)) return bundle.getParcelable(State.TAG);
     return State.defaultState();
   }
@@ -54,7 +54,7 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
 
   private Bundle bundleToSave() {
     State state = driver().currentState();
-    if (state == null) return Bundle.EMPTY;
+    if (state == null) return new Bundle();
 
     Bundle bundle = new Bundle();
     bundle.putParcelable(State.TAG, state);
@@ -62,7 +62,7 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
   }
 
   private void onDetach(ViewAttachEvent e) {
-    viewStateManager.saveState(bundleToSave());
+    viewState.set(bundleToSave());
   }
 
   private void onAttach(ViewAttachEvent e) {
@@ -89,22 +89,25 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
   @dagger.Module
   public static class Module {
 
-    private final ViewStateManager viewStateManager;
+    private final ViewState viewState;
+    private final View view;
 
-    public Module(ViewStateManager viewStateManager) {
-      this.viewStateManager = viewStateManager;
+    public Module(View view, ViewState viewState) {
+      this.view = view;
+      this.viewState = viewState;
     }
 
     @PerScreen
     @Provides
-    public ViewStateManager viewStateManager() {
-      return viewStateManager;
+    public ViewState viewStateManager() {
+      return viewState;
     }
 
     @PerScreen
     @Provides
     public Component1View view(@ActivityContext Context context) {
-      return (Component1View) View.inflate(context, R.layout.screen_feature_1, null);
+      if (view != null) return (Component1View) view;
+      return (Component1View) View.inflate(context, R.layout.screen_component_1, null);
     }
   }
 }
