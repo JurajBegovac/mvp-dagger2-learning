@@ -37,15 +37,12 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
   protected BaseDispatcher flowDispatcher;
-
   private Dialog dialog;
 
   protected abstract Object initScreen();
 
-  protected abstract void changeDialogKey(Object dialogKey);
-
-  protected abstract boolean changeMainKey(
-      Object mainKey, Direction direction, TraversalCallback callback);
+  protected abstract void changeKey(
+      Object mainKey, @Nullable Object dialogKey, Direction direction, TraversalCallback callback);
 
   @Override
   protected void attachBaseContext(Context newBase) {
@@ -95,29 +92,21 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       dialogKey = null;
     }
 
-    // TODO: 19/01/2017 temporary hack
-    boolean shouldComplete = true;
-
     if (mainKey.equals(FLOW_EMPTY_SIGNAL)) {
       // this is first empty signal and  it'll be replaced
       TextView view = new TextView(this);
       view.setText("Empty view");
       showMainView(view, direction);
-    } else if (mainKey.equals(FLOW_FINISH_SIGNAL)) {
+      callback.onTraversalCompleted();
+      return;
+    }
+    if (mainKey.equals(FLOW_FINISH_SIGNAL)) {
       finish();
       return;
-    } else {
-      // let some other flow implementation handle the key
-      shouldComplete = changeMainKey(mainKey, direction, callback);
     }
 
-    if (shouldComplete) {
-      dismissOldDialog();
-      if (dialogKey != null) {
-        changeDialogKey(dialogKey);
-      }
-      callback.onTraversalCompleted();
-    }
+    dismissOldDialog();
+    changeKey(mainKey, dialogKey, direction, callback);
   }
 
   private ViewGroup getRootView() {

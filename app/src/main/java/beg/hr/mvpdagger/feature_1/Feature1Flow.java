@@ -3,8 +3,8 @@ package beg.hr.mvpdagger.feature_1;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.TextView;
 
 import beg.hr.mvpdagger.MvpDaggerApplication;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
@@ -38,23 +38,21 @@ public class Feature1Flow extends FlowActivity {
   }
 
   @Override
-  protected void changeDialogKey(Object dialogKey) {}
-
-  @Override
-  protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
+  protected void changeKey(
+      Object mainKey, @Nullable Object dialogKey, Direction direction, TraversalCallback callback) {
     View view = null;
+
     ViewComponent viewComponent =
         viewComponentFactory.create(mainKey, null, viewStateManager(mainKey));
     if (viewComponent != null) view = viewComponent.view();
-    else if (mainKey.equals(DUMMY_KEY)) {
-      view = new TextView(this);
-      ((TextView) view).setText("Dummy");
-    }
 
     if (view != null) {
       showMainView(view, direction);
-      return true;
     }
-    return false;
+
+    if (dialogKey != null) {
+      // TODO: 01/02/2017 handle dialog
+    }
+    callback.onTraversalCompleted();
   }
 }

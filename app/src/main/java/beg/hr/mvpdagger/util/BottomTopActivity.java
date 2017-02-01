@@ -38,15 +38,11 @@ public class BottomTopActivity extends FlowActivity {
   }
 
   @Override
-  protected void changeDialogKey(Object dialogKey) {
-    // TODO: 31/01/2017
-  }
-
-  @Override
-  protected boolean changeMainKey(Object mainKey, Direction direction, TraversalCallback callback) {
-    // TODO: 31/01/2017
-    return false;
-  }
+  protected void changeKey(
+      Object mainKey,
+      @Nullable Object dialogKey,
+      Direction direction,
+      TraversalCallback callback) {}
 
   @Override
   public void finish() {
