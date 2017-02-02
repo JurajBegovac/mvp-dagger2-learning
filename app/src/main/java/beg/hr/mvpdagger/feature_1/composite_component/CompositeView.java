@@ -2,6 +2,7 @@ package beg.hr.mvpdagger.feature_1.composite_component;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import beg.hr.mvpdagger.R;
@@ -11,7 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /** Created by juraj on 01/02/2017. */
-public class CompositeView extends ScrollView {
+public class CompositeView extends LinearLayout {
 
   @BindView(R.id.component1)
   public Component1View component1View;

@@ -23,6 +23,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.TYPE_BUTTON_BACK_PRESSED;
+import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 
 /** Created by juraj on 31/01/2017. */
 public class Component2ViewComponent extends ViewDriverComponent<Component2ViewDriver>
@@ -83,11 +84,11 @@ public class Component2ViewComponent extends ViewDriverComponent<Component2ViewD
         .subscribe(o -> driver().goBack());
 
     // TODO: 31/01/2017 Handle other navigation
-    //    out.navigation()
-    //        .observeOn(AndroidSchedulers.mainThread())
-    //        .compose(driver().bindUntilDetach())
-    //        .filter(o -> !o.equals(TYPE_BUTTON_BACK_PRESSED))
-    //        .subscribe(o -> driver().goTo(o));
+    out.navigation()
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(driver().bindUntilDetach())
+        .filter(FEATURE1_COMPONENT1::equals)
+        .subscribe(o -> driver().goTo(o));
   }
 
   @PerScreen

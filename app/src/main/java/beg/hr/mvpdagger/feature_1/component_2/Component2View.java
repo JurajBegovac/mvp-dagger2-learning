@@ -16,8 +16,8 @@ public class Component2View extends LinearLayout {
   @BindView(R.id.editText)
   EditText editText;
 
-  @BindView(R.id.dialog)
-  Button startDialog;
+  @BindView(R.id.btn)
+  Button btn;
 
   @BindView(R.id.back)
   Button back;

@@ -76,4 +76,7 @@ dependencies {
     // Lifecycle handling APIs for Android apps using RxJava
     compile('com.trello:rxlifecycle:1.0')
     compile('com.trello:rxlifecycle-android:1.0')
+
+    // Backported transitions
+    compile 'com.andkulikov:transitionseverywhere:1.7.0'
 }

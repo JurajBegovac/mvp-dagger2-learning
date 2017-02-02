@@ -25,7 +25,7 @@ import rx.Observable;
 public class Component2ViewDriver extends ViewDriver<Component2View, State> {
 
   public static final String BASE = "view:component2:";
-  public static final String TYPE_BUTTON_DIALOG_PRESSED = BASE + "button_dialog_pressed";
+  public static final String TYPE_BUTTON_PRESSED = BASE + "button_dialog_pressed";
   public static final String TYPE_BUTTON_BACK_PRESSED = BASE + "button_back_pressed";
   public static final String TYPE_TEXT_CHANGED = BASE + "text_changed";
 
@@ -39,7 +39,7 @@ public class Component2ViewDriver extends ViewDriver<Component2View, State> {
     super(view);
     events =
         Observable.merge(
-                Binder.bind(view, TYPE_BUTTON_DIALOG_PRESSED),
+                Binder.bind(view, TYPE_BUTTON_PRESSED),
                 Binder.bind(view, TYPE_BUTTON_BACK_PRESSED),
                 Binder.bind(view, TYPE_TEXT_CHANGED))
             .share();
@@ -89,9 +89,9 @@ public class Component2ViewDriver extends ViewDriver<Component2View, State> {
     @NonNull
     static Observable<Event> bind(Component2View view, String type) {
       Builder builder = Event.builder().origin("component2_view_driver");
-      if (TYPE_BUTTON_DIALOG_PRESSED.equals(type))
-        return RxView.clicks(view.startDialog)
-            .map(e -> builder.type(TYPE_BUTTON_DIALOG_PRESSED).build());
+      if (TYPE_BUTTON_PRESSED.equals(type))
+        return RxView.clicks(view.btn)
+            .map(e -> builder.type(TYPE_BUTTON_PRESSED).build());
       if (TYPE_BUTTON_BACK_PRESSED.equals(type))
         return RxView.clicks(view.back).map(e -> builder.type(TYPE_BUTTON_BACK_PRESSED).build());
       if (TYPE_TEXT_CHANGED.equals(type))

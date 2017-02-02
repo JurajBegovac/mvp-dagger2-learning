@@ -11,7 +11,7 @@ import rx.Observable;
 
 import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.State.TEXT;
 import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.TYPE_BUTTON_BACK_PRESSED;
-import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.TYPE_BUTTON_DIALOG_PRESSED;
+import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.TYPE_BUTTON_PRESSED;
 import static beg.hr.mvpdagger.feature_1.component_2.Component2ViewDriver.TYPE_TEXT_CHANGED;
 
 /** Created by juraj on 31/01/2017. */
@@ -38,15 +38,15 @@ public class Component2Model {
 
   private Observable<Object> getNavigation(Input input) {
     // TODO: 31/01/2017
-    Observable<String> startDialogEvent =
+    Observable<String> buttonEvent =
         input
-            .events(TYPE_BUTTON_DIALOG_PRESSED)
-            .map(event -> ViewComponentFactory.FEATURE1_COMPONENT2);
+            .events(TYPE_BUTTON_PRESSED)
+            .map(event -> ViewComponentFactory.FEATURE1_COMPONENT1);
 
     // TODO: 31/01/2017 This now maps this event just to type of event - map it to some navigation command
     Observable<String> goBackEvent = input.events(TYPE_BUTTON_BACK_PRESSED).map(Event::type);
 
-    return Observable.merge(startDialogEvent, goBackEvent);
+    return Observable.merge(buttonEvent, goBackEvent);
   }
 
   private Observable<State> getState(Input input) {

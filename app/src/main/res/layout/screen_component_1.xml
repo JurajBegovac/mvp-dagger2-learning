@@ -2,18 +2,27 @@
 <beg.hr.mvpdagger.feature_1.component_1.Component1View
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
+        android:background="@android:color/holo_red_light"
         android:layout_width="match_parent"
+        android:padding="10dp"
         android:layout_height="match_parent">
 
-    <Button android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button"
-            android:id="@+id/btn" />
+    <TextView
+            android:layout_width="match_parent"
+            android:text="This is component 1"
+            android:layout_height="wrap_content" />
 
-    <EditText android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:id="@+id/et"
-              android:textSize="24sp"
-              android:hint="Add text" />
+    <Button
+            android:id="@+id/btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Go to component 2" />
+
+    <EditText
+            android:id="@+id/et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:hint="Add text" />
 
 </beg.hr.mvpdagger.feature_1.component_1.Component1View>
