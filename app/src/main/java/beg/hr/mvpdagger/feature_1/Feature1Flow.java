@@ -18,7 +18,6 @@ import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE
 
 public class Feature1Flow extends FlowActivity {
 
-  public static final String DUMMY_KEY = "dummy_key";
   private ViewComponentFactory viewComponentFactory;
 
   public static Intent getStartIntent(Context context) {
@@ -26,7 +25,7 @@ public class Feature1Flow extends FlowActivity {
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
     viewComponentFactory =
         MvpDaggerApplication.component().plus(new ActivityModule(this)).viewComponentFactory();
     super.onCreate(savedInstanceState);

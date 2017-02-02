@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.AnimRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import java.util.Map;
 
 import beg.hr.mvpdagger.R;
-import beg.hr.mvpdagger.util.BottomTopActivity;
 import flow.Direction;
 import flow.Flow;
 import flow.History;
@@ -104,6 +102,10 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       finish();
       return;
     }
+    if (mainKey instanceof NewFlowKey) {
+      startAnotherFlow(callback, (NewFlowKey) mainKey);
+      return;
+    }
 
     dismissOldDialog();
     changeKey(mainKey, dialogKey, direction, callback);
@@ -155,6 +157,16 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     view.startAnimation(enterAnimation);
   }
 
+  private void startAnotherFlow(TraversalCallback callback, NewFlowKey newFlowKey) {
+    callback.onTraversalCompleted();
+    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
+    historyBuilder.pop();
+    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
+
+    startActivity(newFlowKey.intent());
+    overridePendingTransition(newFlowKey.enterAnim(), newFlowKey.exitAnim());
+  }
+
   protected void showMainView(View view, Direction direction) {
     State outgoingState = flowDispatcher.getOutgoingState();
     if (shouldAnimate(outgoingState)) animate(view, direction);
@@ -165,16 +177,6 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected void showDialog(Dialog dialog) {
     this.dialog = dialog;
     this.dialog.show();
-  }
-
-  protected void startAnotherFlow(TraversalCallback callback, Parcelable initScreen) {
-    callback.onTraversalCompleted();
-    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
-    historyBuilder.pop();
-    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
-
-    startActivity(BottomTopActivity.getStartIntent(this, initScreen));
-    overridePendingTransition(R.anim.slide_in_bottom, R.anim.nothing);
   }
 
   protected void mainKeyToDialogKey(Object mainKey, TraversalCallback callback) {
