@@ -3,6 +3,7 @@ package beg.hr.mvpdagger.feature_1.component_1;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding.view.ViewAttachEvent;
 
@@ -14,6 +15,7 @@ import beg.hr.mvpdagger.di.dagger2.scopes.PerScreen;
 import beg.hr.mvpdagger.feature_1.component_1.Component1Model.Input;
 import beg.hr.mvpdagger.feature_1.component_1.Component1Model.Output;
 import beg.hr.mvpdagger.feature_1.component_1.Component1ViewDriver.State;
+import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.flow.ViewState;
 import beg.hr.mvpdagger.util.view.Event;
 import beg.hr.mvpdagger.util.view.ViewDriverComponent;
@@ -105,7 +107,9 @@ public class Component1ViewComponent extends ViewDriverComponent<Component1ViewD
 
     @PerScreen
     @Provides
-    public Component1View view(@ActivityContext Context context) {
+    public Component1View view(@ActivityContext Context context, ViewGroup root) {
+//      View viewFromRoot = Utils.getViewFromRoot(root, Component1View.class);
+//      if (viewFromRoot != null) return (Component1View) viewFromRoot;
       if (view != null) return (Component1View) view;
       return (Component1View) View.inflate(context, R.layout.screen_component_1, null);
     }

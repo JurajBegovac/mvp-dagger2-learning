@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
-import com.transitionseverywhere.Scene;
 import com.transitionseverywhere.Slide;
 import com.transitionseverywhere.Transition;
+import com.transitionseverywhere.Transition.TransitionListenerAdapter;
 import com.transitionseverywhere.TransitionManager;
 import com.transitionseverywhere.TransitionSet;
 
@@ -19,27 +19,115 @@ import com.transitionseverywhere.TransitionSet;
 public class Transitions {
 
   public static void animateEnterRightExitLeft(Config config) {
-    Transition exit = new Slide(Gravity.START);
-    exit.addTarget(config.current());
+    ViewGroup root = config.root();
+    View currentView = config.current();
+    View newView = config.newView();
 
-    Transition enter = new Slide(Gravity.END);
-    enter.addTarget(config.newView());
+    View newViewFromRoot = Utils.getViewFromRoot(root, newView);
 
-    TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
-    Scene scene = new Scene(config.root(), config.newView());
-    TransitionManager.go(scene, set);
+    if (newViewFromRoot != null) {
+      Transition exit = new Slide(Gravity.START);
+      exit.addTarget(currentView);
+
+      Transition enter = new Slide(Gravity.END);
+      enter.addTarget(newViewFromRoot);
+
+      TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
+      set.addListener(
+          new MyListener() {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+              if (!isPaused) {
+                root.removeView(currentView);
+                root.removeView(newViewFromRoot);
+                root.addView(newView);
+              }
+            }
+          });
+
+      TransitionManager.beginDelayedTransition(root, set);
+      currentView.setVisibility(View.GONE);
+      newViewFromRoot.setVisibility(View.VISIBLE);
+    } else {
+      root.addView(newView);
+      newView.setVisibility(View.GONE);
+
+      Transition exit = new Slide(Gravity.START);
+      exit.addTarget(currentView);
+
+      Transition enter = new Slide(Gravity.END);
+      enter.addTarget(newView);
+
+      TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
+
+      set.addListener(
+          new MyListener() {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+              if (!isPaused) root.removeView(currentView);
+            }
+          });
+
+      TransitionManager.beginDelayedTransition(root, set);
+      currentView.setVisibility(View.GONE);
+      newView.setVisibility(View.VISIBLE);
+    }
   }
 
   public static void animateEnterLeftExitRight(Config config) {
-    Transition exit = new Slide(Gravity.END);
-    exit.addTarget(config.current());
+    ViewGroup root = config.root();
+    View currentView = config.current();
+    View newView = config.newView();
 
-    Transition enter = new Slide(Gravity.START);
-    enter.addTarget(config.newView());
+    View newViewFromRoot = Utils.getViewFromRoot(root, newView);
 
-    TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
-    Scene scene = new Scene(config.root(), config.newView());
-    TransitionManager.go(scene, set);
+    if (newViewFromRoot != null) {
+      Transition exit = new Slide(Gravity.END);
+      exit.addTarget(currentView);
+
+      Transition enter = new Slide(Gravity.START);
+      enter.addTarget(newViewFromRoot);
+
+      TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
+      set.addListener(
+          new MyListener() {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+              if (!isPaused) {
+                root.removeView(currentView);
+                root.removeView(newViewFromRoot);
+                root.addView(newView);
+              }
+            }
+          });
+
+      TransitionManager.beginDelayedTransition(root, set);
+      currentView.setVisibility(View.GONE);
+      newViewFromRoot.setVisibility(View.VISIBLE);
+
+    } else {
+      root.addView(newView);
+      newView.setVisibility(View.GONE);
+
+      Transition exit = new Slide(Gravity.END);
+      exit.addTarget(currentView);
+
+      Transition enter = new Slide(Gravity.START);
+      enter.addTarget(newView);
+
+      TransitionSet set = buildTransitionSet(exit, enter, config.duration(), config.interpolator());
+      set.addListener(
+          new MyListener() {
+            @Override
+            public void onTransitionEnd(Transition transition) {
+              if (!isPaused) root.removeView(currentView);
+            }
+          });
+
+      TransitionManager.beginDelayedTransition(root, set);
+      currentView.setVisibility(View.GONE);
+      newView.setVisibility(View.VISIBLE);
+    }
   }
 
   /**
@@ -108,6 +196,15 @@ public class Transitions {
     transitionSet.setDuration(duration);
     transitionSet.setInterpolator(interpolator);
     return transitionSet;
+  }
+
+  private static class MyListener extends TransitionListenerAdapter {
+    boolean isPaused = false;
+
+    @Override
+    public void onTransitionPause(Transition transition) {
+      isPaused = true;
+    }
   }
 
   @AutoValue

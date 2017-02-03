@@ -75,10 +75,12 @@ public class Feature1Flow extends FlowActivity {
               && FEATURE1_COMPONENT1.equals(newState)) {
             Transitions.animateEnterBottomExitNone(
                 Transitions.Config.builder().root(root).current(current).newView(newView).build());
+            return;
           } else if (FEATURE1_COMPONENT1.equals(oldState)
               && FEATURE1_COMPOSITE_COMPONENT.equals(newState)) {
             Transitions.animateEnterNoneExitBottom(
                 Transitions.Config.builder().root(root).current(current).newView(newView).build());
+            return;
           }
         }
         super.execute(root, current, newView, oldState, newState, direction);
