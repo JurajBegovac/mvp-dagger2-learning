@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<beg.hr.mvpdagger.feature_1.component_1.Component1View
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:background="@android:color/holo_red_light"
-        android:layout_width="match_parent"
-        android:padding="10dp"
-        android:layout_height="match_parent">
+<beg.hr.mvpdagger.feature_1.component_1.Component1View xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_red_light"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
-            android:layout_width="match_parent"
-            android:text="This is component 1"
-            android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is component 1" />
 
     <Button
-            android:id="@+id/btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Go to component 2" />
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Go to component 2" />
 
     <EditText
-            android:id="@+id/et"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:hint="Add text" />
-
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Add text"
+        android:textSize="24sp" />
 </beg.hr.mvpdagger.feature_1.component_1.Component1View>

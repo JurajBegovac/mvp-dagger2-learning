@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.util;
+package beg.hr.mvpdagger.util.transitions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

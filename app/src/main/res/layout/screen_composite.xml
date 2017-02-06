@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<beg.hr.mvpdagger.feature_1.composite_component.CompositeView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:background="@android:color/holo_green_light"
-        android:layout_height="match_parent">
+<beg.hr.mvpdagger.feature_1.composite_component.CompositeView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_light"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:layout_marginBottom="10dp"
-            android:text="This is composite component"
-            android:layout_height="wrap_content" />
-    <include
-            layout="@layout/screen_component_1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:id="@+id/component1" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="This is composite component" />
 
     <include
-            layout="@layout/screen_component_2"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:id="@+id/component2" />
+        android:id="@+id/component1"
+        layout="@layout/screen_component_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/component2"
+        layout="@layout/screen_component_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </beg.hr.mvpdagger.feature_1.composite_component.CompositeView>

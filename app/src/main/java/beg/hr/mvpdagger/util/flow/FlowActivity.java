@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import java.util.Map;
 
-import beg.hr.mvpdagger.util.DefaultTransitionsFactory;
-import beg.hr.mvpdagger.util.TransitionsFactory;
+import beg.hr.mvpdagger.util.transitions.DefaultTransitionsFactory;
+import beg.hr.mvpdagger.util.transitions.TransitionManager;
+import beg.hr.mvpdagger.util.transitions.TransitionsFactory;
 import flow.Direction;
 import flow.Flow;
 import flow.History;
@@ -33,6 +34,8 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
   protected BaseDispatcher flowDispatcher;
+  protected TransitionManager transitionManager;
+
   private Dialog dialog;
   private TransitionsFactory transitionsFactory;
 
@@ -46,11 +49,12 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       TraversalCallback callback);
 
   protected TransitionsFactory transitionsFactory() {
-    return new DefaultTransitionsFactory();
+    return new DefaultTransitionsFactory(transitionManager);
   }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    transitionManager = new TransitionManager(getRootView());
     transitionsFactory = transitionsFactory();
     super.onCreate(savedInstanceState);
   }
@@ -108,7 +112,8 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       // this is first empty signal and  it'll be replaced
       TextView view = new TextView(this);
       view.setText("Empty view");
-      showMainView(outKey, mainKey, view, direction);
+      getRootView().removeAllViews();
+      getRootView().addView(view);
       callback.onTraversalCompleted();
       return;
     }
@@ -125,12 +130,12 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     changeKey(outKey, mainKey, dialogKey, direction, callback);
   }
 
-  private ViewGroup getRootView() {
+  protected ViewGroup getRootView() {
     return (ViewGroup) findViewById(android.R.id.content);
   }
 
   @Nullable
-  private View getCurrentView() {
+  protected View getCurrentView() {
     ViewGroup rootView = getRootView();
     int childCount = rootView.getChildCount();
     if (childCount > 0) return rootView.getChildAt(childCount - 1);
@@ -167,13 +172,8 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     overridePendingTransition(newFlowKey.enterAnim(), newFlowKey.exitAnim());
   }
 
-  private void animate(@Nullable Object oldKey, Object key, View view, Direction direction) {
-    transitionsFactory.execute(getRootView(), getCurrentView(), view, oldKey, key, direction);
-  }
-
-  protected void showMainView(@Nullable Object oldKey, Object key, View view, Direction direction) {
-    State outgoingState = flowDispatcher.getOutgoingState();
-    if (shouldAnimate(outgoingState)) animate(oldKey, key, view, direction);
+  protected void showMain(View in, Object oldState, Object newState, Direction direction) {
+    transitionsFactory.execute(getRootView(), getCurrentView(), in, oldState, newState, direction);
   }
 
   protected void showDialog(Dialog dialog) {

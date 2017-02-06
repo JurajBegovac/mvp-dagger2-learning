@@ -9,16 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import beg.hr.mvpdagger.MvpDaggerApplication;
+import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
-import beg.hr.mvpdagger.util.DefaultTransitionsFactory;
-import beg.hr.mvpdagger.util.Transitions;
-import beg.hr.mvpdagger.util.TransitionsFactory;
 import beg.hr.mvpdagger.util.flow.FlowActivity;
+import beg.hr.mvpdagger.util.transitions.DefaultTransitionsFactory;
+import beg.hr.mvpdagger.util.transitions.TransitionsFactory;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
 import flow.TraversalCallback;
 
+import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_BOTTOM_OUT_NONE;
+import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_NONE_OUT_BOTTOM;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE_COMPONENT;
 
@@ -44,12 +46,17 @@ public class Feature1Flow extends FlowActivity {
       TraversalCallback callback) {
     View view = null;
 
+    if (transitionManager.inProgress()) {
+      transitionManager.reverse();
+      callback.onTraversalCompleted();
+      return;
+    }
+
     ViewComponent viewComponent =
         viewComponentFactory.create(mainKey, null, viewStateManager(mainKey));
     if (viewComponent != null) view = viewComponent.view();
-
     if (view != null) {
-      showMainView(previousKey, mainKey, view, direction);
+      showMain(view, previousKey, mainKey, direction);
     }
 
     if (dialogKey != null) {
@@ -60,8 +67,7 @@ public class Feature1Flow extends FlowActivity {
 
   @Override
   protected TransitionsFactory transitionsFactory() {
-
-    return new DefaultTransitionsFactory() {
+    return new DefaultTransitionsFactory(transitionManager) {
       @Override
       public void execute(
           @NonNull ViewGroup root,
@@ -73,13 +79,11 @@ public class Feature1Flow extends FlowActivity {
         if (oldState != null) {
           if (FEATURE1_COMPOSITE_COMPONENT.equals(oldState)
               && FEATURE1_COMPONENT1.equals(newState)) {
-            Transitions.animateEnterBottomExitNone(
-                Transitions.Config.builder().root(root).current(current).newView(newView).build());
+            transitionManager.animate(current, newView, IN_BOTTOM_OUT_NONE);
             return;
           } else if (FEATURE1_COMPONENT1.equals(oldState)
               && FEATURE1_COMPOSITE_COMPONENT.equals(newState)) {
-            Transitions.animateEnterNoneExitBottom(
-                Transitions.Config.builder().root(root).current(current).newView(newView).build());
+            transitionManager.animate(current, newView, IN_NONE_OUT_BOTTOM);
             return;
           }
         }
@@ -90,8 +94,8 @@ public class Feature1Flow extends FlowActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    viewComponentFactory =
-        MvpDaggerApplication.component().plus(new ActivityModule(this)).viewComponentFactory();
+    ActivityComponent component = MvpDaggerApplication.component().plus(new ActivityModule(this));
+    viewComponentFactory = component.viewComponentFactory();
     super.onCreate(savedInstanceState);
   }
 }
