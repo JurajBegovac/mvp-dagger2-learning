@@ -11,12 +11,23 @@ import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_LEFT_OUT_RI
 import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_RIGHT_OUT_LEFT;
 
 /** Created by juraj on 02/02/2017. */
-public class DefaultTransitionsFactory implements TransitionsFactory {
+public class DefaultShowViewFactory implements ShowViewFactory {
 
   private final TransitionManager transitionManager;
 
-  public DefaultTransitionsFactory(TransitionManager transitionManager) {
+  private Object out;
+  private Object in;
+
+  public DefaultShowViewFactory(TransitionManager transitionManager) {
     this.transitionManager = transitionManager;
+  }
+
+  @Override
+  public boolean shouldReverse(Object out, Object in) {
+    boolean retValue = transitionManager.inProgress() && this.in.equals(out) && this.out.equals(in);
+    this.out = out;
+    this.in = in;
+    return retValue;
   }
 
   @Override
@@ -38,6 +49,8 @@ public class DefaultTransitionsFactory implements TransitionsFactory {
       case BACKWARD:
         transitionManager.animate(current, newView, IN_LEFT_OUT_RIGHT);
         break;
+      default:
+        throw new IllegalStateException("Don't know how to handle this direction: " + direction);
     }
   }
 }

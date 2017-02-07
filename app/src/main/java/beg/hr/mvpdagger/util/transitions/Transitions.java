@@ -67,13 +67,16 @@ public class Transitions {
   public static void animateEnterBottomExitNone(Config config, TransitionListener listener) {
     ViewGroup root = config.root();
     View newView = config.newView();
+
+    newView.setVisibility(View.GONE);
+
     Transition transition = new Slide(Gravity.BOTTOM);
     transition.addTarget(newView);
     transition.setDuration(config.duration());
     transition.setInterpolator(config.interpolator());
     transition.addListener(listener);
     TransitionManager.beginDelayedTransition(root, transition);
-    root.addView(newView);
+    newView.setVisibility(View.VISIBLE);
   }
 
   /**
@@ -89,7 +92,7 @@ public class Transitions {
     transition.setInterpolator(config.interpolator());
     transition.addListener(listener);
     TransitionManager.beginDelayedTransition(root, transition);
-    root.removeView(current);
+    current.setVisibility(View.GONE);
   }
 
   private static TransitionSet buildTransitionSet(

@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import flow.Direction;
 
 /** Created by juraj on 02/02/2017. */
-public interface TransitionsFactory {
+public interface ShowViewFactory {
+
+  boolean shouldReverse(Object out, Object in);
 
   void execute(
       @NonNull ViewGroup root,

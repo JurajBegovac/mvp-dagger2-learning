@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import java.util.Map;
 
-import beg.hr.mvpdagger.util.transitions.DefaultTransitionsFactory;
+import beg.hr.mvpdagger.util.transitions.DefaultShowViewFactory;
+import beg.hr.mvpdagger.util.transitions.ShowViewFactory;
 import beg.hr.mvpdagger.util.transitions.TransitionManager;
-import beg.hr.mvpdagger.util.transitions.TransitionsFactory;
 import flow.Direction;
 import flow.Flow;
 import flow.History;
@@ -37,7 +37,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected TransitionManager transitionManager;
 
   private Dialog dialog;
-  private TransitionsFactory transitionsFactory;
+  private ShowViewFactory showViewFactory;
 
   protected abstract Object initScreen();
 
@@ -48,14 +48,14 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       Direction direction,
       TraversalCallback callback);
 
-  protected TransitionsFactory transitionsFactory() {
-    return new DefaultTransitionsFactory(transitionManager);
+  protected ShowViewFactory showFactory() {
+    return new DefaultShowViewFactory(transitionManager);
   }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     transitionManager = new TransitionManager(getRootView());
-    transitionsFactory = transitionsFactory();
+    showViewFactory = showFactory();
     super.onCreate(savedInstanceState);
   }
 
@@ -106,6 +106,12 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     } else {
       mainKey = inKey;
       dialogKey = null;
+    }
+
+    if (showViewFactory.shouldReverse(outKey, mainKey)) {
+      transitionManager.reverse();
+      callback.onTraversalCompleted();
+      return;
     }
 
     if (mainKey.equals(FLOW_EMPTY_SIGNAL)) {
@@ -173,7 +179,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   protected void showMain(View in, Object oldState, Object newState, Direction direction) {
-    transitionsFactory.execute(getRootView(), getCurrentView(), in, oldState, newState, direction);
+    showViewFactory.execute(getRootView(), getCurrentView(), in, oldState, newState, direction);
   }
 
   protected void showDialog(Dialog dialog) {

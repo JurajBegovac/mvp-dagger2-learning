@@ -12,8 +12,8 @@ import beg.hr.mvpdagger.MvpDaggerApplication;
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.util.flow.FlowActivity;
-import beg.hr.mvpdagger.util.transitions.DefaultTransitionsFactory;
-import beg.hr.mvpdagger.util.transitions.TransitionsFactory;
+import beg.hr.mvpdagger.util.transitions.DefaultShowViewFactory;
+import beg.hr.mvpdagger.util.transitions.ShowViewFactory;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
@@ -46,12 +46,6 @@ public class Feature1Flow extends FlowActivity {
       TraversalCallback callback) {
     View view = null;
 
-    if (transitionManager.inProgress()) {
-      transitionManager.reverse();
-      callback.onTraversalCompleted();
-      return;
-    }
-
     ViewComponent viewComponent =
         viewComponentFactory.create(mainKey, null, viewStateManager(mainKey));
     if (viewComponent != null) view = viewComponent.view();
@@ -66,8 +60,8 @@ public class Feature1Flow extends FlowActivity {
   }
 
   @Override
-  protected TransitionsFactory transitionsFactory() {
-    return new DefaultTransitionsFactory(transitionManager) {
+  protected ShowViewFactory showFactory() {
+    return new DefaultShowViewFactory(transitionManager) {
       @Override
       public void execute(
           @NonNull ViewGroup root,

@@ -38,7 +38,7 @@ public class TransitionManager {
     reverse(inView, outView);
   }
 
-  public void reverse(View outView, View inView) {
+  private void reverse(View outView, View inView) {
     switch (type) {
       case IN_RIGHT_OUT_LEFT:
         animate(outView, inView, IN_LEFT_OUT_RIGHT);
@@ -63,75 +63,36 @@ public class TransitionManager {
     this.inView = inView;
 
     Config config = Config.builder().root(root).current(outView).newView(inView).build();
-    TransitionListenerAdapter listener;
+    TransitionListenerAdapter listener =
+        new MyListener() {
+          @Override
+          public void onTransitionStart(Transition transition) {
+            status = IN_PROGRESS;
+          }
+
+          @Override
+          public void onTransitionEnd(Transition transition) {
+            status = IDLE;
+            if (!isCanceled()) {
+              root.removeView(outView);
+            }
+          }
+        };
 
     switch (type) {
       case IN_RIGHT_OUT_LEFT:
         if (inView.getParent() == null) root.addView(inView);
-        listener =
-            new MyListener() {
-              @Override
-              public void onTransitionStart(Transition transition) {
-                status = IN_PROGRESS;
-              }
-
-              @Override
-              public void onTransitionEnd(Transition transition) {
-                status = IDLE;
-                if (!isCanceled()) {
-                  root.removeView(outView);
-                }
-              }
-            };
         Transitions.animateEnterRightExitLeft(config, listener);
         break;
       case IN_LEFT_OUT_RIGHT:
         if (inView.getParent() == null) root.addView(inView);
-        listener =
-            new MyListener() {
-              @Override
-              public void onTransitionStart(Transition transition) {
-                status = IN_PROGRESS;
-              }
-
-              @Override
-              public void onTransitionEnd(Transition transition) {
-                status = IDLE;
-                if (!isCanceled()) {
-                  root.removeView(outView);
-                }
-              }
-            };
         Transitions.animateEnterLeftExitRight(config, listener);
         break;
       case IN_BOTTOM_OUT_NONE:
-        listener =
-            new MyListener() {
-              @Override
-              public void onTransitionStart(Transition transition) {
-                status = IN_PROGRESS;
-              }
-
-              @Override
-              public void onTransitionEnd(Transition transition) {
-                status = IDLE;
-              }
-            };
+        if (inView.getParent() == null) root.addView(inView);
         Transitions.animateEnterBottomExitNone(config, listener);
         break;
       case IN_NONE_OUT_BOTTOM:
-        listener =
-            new MyListener() {
-              @Override
-              public void onTransitionStart(Transition transition) {
-                status = IN_PROGRESS;
-              }
-
-              @Override
-              public void onTransitionEnd(Transition transition) {
-                status = IDLE;
-              }
-            };
         if (shouldAddNewView(root, config.newView())) {
           root.removeView(outView);
           root.addView(inView);
