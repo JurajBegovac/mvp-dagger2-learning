@@ -47,4 +47,11 @@ public class Utils {
       root.removeView(child);
     }
   }
+
+  @Nullable
+  public static View getCurrentView(ViewGroup rootView) {
+    int childCount = rootView.getChildCount();
+    if (childCount > 0) return rootView.getChildAt(childCount - 1);
+    return null;
+  }
 }

@@ -2,7 +2,6 @@ package beg.hr.mvpdagger.feature_1.composite_component;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
@@ -70,9 +69,7 @@ public class CompositeViewComponent implements ViewComponent<CompositeView> {
 
     @PerScreen
     @Provides
-    public CompositeView view(@ActivityContext Context context, ViewGroup root) {
-      //      View viewFromRoot = Utils.getViewFromRoot(root, CompositeView.class);
-      //      if (viewFromRoot != null) return (CompositeView) viewFromRoot;
+    public CompositeView view(@ActivityContext Context context) {
       return (CompositeView) View.inflate(context, R.layout.screen_composite, null);
     }
   }

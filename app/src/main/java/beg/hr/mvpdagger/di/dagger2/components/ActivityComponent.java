@@ -1,7 +1,6 @@
 package beg.hr.mvpdagger.di.dagger2.components;
 
 import android.content.Context;
-import android.view.ViewGroup;
 
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
@@ -27,6 +26,4 @@ public interface ActivityComponent {
   ViewComponentFactory viewComponentFactory();
 
   ObjectGraph plus(CompositeViewComponent.Module module);
-
-  ViewGroup root();
 }

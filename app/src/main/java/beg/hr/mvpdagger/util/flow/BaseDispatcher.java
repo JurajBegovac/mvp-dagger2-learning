@@ -52,11 +52,6 @@ public class BaseDispatcher implements Dispatcher, KeyChanger {
     keyChanger.changeKey(outgoingState, incomingState, direction, incomingContexts, callback);
   }
 
-  @Nullable
-  State getOutgoingState() {
-    return traversal.origin == null ? null : traversal.getState(traversal.origin.top());
-  }
-
   public Bundle getBundle(Object key) {
     State state = getState(key);
     return state.getBundle();

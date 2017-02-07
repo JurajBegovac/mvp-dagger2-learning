@@ -2,7 +2,6 @@ package beg.hr.mvpdagger.di.dagger2.modules;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.ViewGroup;
 
 import beg.hr.mvpdagger.di.dagger2.qualifiers.ActivityContext;
 import beg.hr.mvpdagger.di.dagger2.scopes.PerActivity;
@@ -30,11 +29,5 @@ public class ActivityModule {
   @Provides
   public ViewComponentFactory viewComponentFactory() {
     return new ViewComponentFactory(activity);
-  }
-
-  @PerActivity
-  @Provides
-  public ViewGroup root() {
-    return (ViewGroup) activity.findViewById(android.R.id.content);
   }
 }
