@@ -37,4 +37,14 @@ public class Utils {
     }
     return false;
   }
+
+  public static void removeAllOtherViews(ViewGroup root, View view) {
+    for (int i = 0; i < root.getChildCount(); i++) {
+      View child = root.getChildAt(i);
+      Class<? extends View> childClass = child.getClass();
+      Class<? extends View> viewClass = view.getClass();
+      if (childClass.equals(viewClass)) continue;
+      root.removeView(child);
+    }
+  }
 }

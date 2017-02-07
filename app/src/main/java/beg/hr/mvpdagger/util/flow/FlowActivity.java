@@ -196,7 +196,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
     Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
   }
 
-  protected ViewState viewStateManager(Object key) {
+  protected ViewState viewState(Object key) {
     return new FlowViewState(key, flowDispatcher);
   }
 }

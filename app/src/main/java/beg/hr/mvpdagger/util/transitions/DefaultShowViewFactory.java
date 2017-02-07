@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
+import beg.hr.mvpdagger.util.Utils;
+import beg.hr.mvpdagger.util.flow.DialogKey;
 import flow.Direction;
 
 import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_LEFT_OUT_RIGHT;
@@ -38,8 +40,26 @@ public class DefaultShowViewFactory implements ShowViewFactory {
       @Nullable Object oldState,
       @NonNull Object newState,
       Direction direction) {
+
+    if (oldState instanceof DialogKey) {
+      Object mainKey = ((DialogKey) oldState).mainContent();
+      if (mainKey.equals(newState)) {
+        if (Utils.rootContainsView(root, newView)) {
+          Utils.removeAllOtherViews(root, newView);
+          return;
+        }
+        root.removeAllViews();
+        root.addView(newView);
+        return;
+      }
+    }
+
     switch (direction) {
       case REPLACE:
+        if (Utils.rootContainsView(root, newView)) {
+          Utils.removeAllOtherViews(root, newView);
+          return;
+        }
         root.removeAllViews();
         root.addView(newView);
         break;

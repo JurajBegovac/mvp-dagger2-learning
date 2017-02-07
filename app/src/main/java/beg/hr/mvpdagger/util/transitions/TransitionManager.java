@@ -12,6 +12,7 @@ import beg.hr.mvpdagger.util.transitions.Transitions.Config;
 /** Created by juraj on 03/02/2017. */
 public class TransitionManager {
 
+  // animation types
   public static final int IN_RIGHT_OUT_LEFT = 200;
   public static final int IN_LEFT_OUT_RIGHT = 201;
   public static final int IN_BOTTOM_OUT_NONE = 202;
@@ -20,7 +21,8 @@ public class TransitionManager {
   private static final int IDLE = 100;
   private static final int IN_PROGRESS = 101;
 
-  private ViewGroup root;
+  private final ViewGroup root;
+
   private View outView;
   private View inView;
   private int status = IDLE;

@@ -1,10 +1,12 @@
 package beg.hr.mvpdagger.feature_1;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,10 +19,10 @@ import beg.hr.mvpdagger.util.transitions.ShowViewFactory;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
+import flow.Flow;
 import flow.TraversalCallback;
 
 import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_BOTTOM_OUT_NONE;
-import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_NONE_OUT_BOTTOM;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE_COMPONENT;
 
@@ -44,17 +46,30 @@ public class Feature1Flow extends FlowActivity {
       @Nullable Object dialogKey,
       Direction direction,
       TraversalCallback callback) {
-    View view = null;
 
-    ViewComponent viewComponent =
-        viewComponentFactory.create(mainKey, null, viewStateManager(mainKey));
+    if (mainKey.equals(FEATURE1_COMPONENT1)) {
+      mainKeyToDialogKey(mainKey, callback);
+      return;
+    }
+
+    View view = null;
+    ViewComponent viewComponent = viewComponentFactory.create(mainKey, null, viewState(mainKey));
     if (viewComponent != null) view = viewComponent.view();
     if (view != null) {
       showMain(view, previousKey, mainKey, direction);
     }
 
     if (dialogKey != null) {
-      // TODO: 01/02/2017 handle dialog
+      ViewComponent dialogComponent =
+          viewComponentFactory.create(dialogKey, null, viewState(dialogKey));
+      if (dialogComponent != null) {
+        Dialog dialog =
+            new AlertDialog.Builder(this)
+                .setView(dialogComponent.view())
+                .setOnCancelListener(dialog1 -> Flow.get(Feature1Flow.this).goBack())
+                .create();
+        showDialog(dialog);
+      }
     }
     callback.onTraversalCompleted();
   }
@@ -75,11 +90,12 @@ public class Feature1Flow extends FlowActivity {
               && FEATURE1_COMPONENT1.equals(newState)) {
             transitionManager.animate(current, newView, IN_BOTTOM_OUT_NONE);
             return;
-          } else if (FEATURE1_COMPONENT1.equals(oldState)
-              && FEATURE1_COMPOSITE_COMPONENT.equals(newState)) {
-            transitionManager.animate(current, newView, IN_NONE_OUT_BOTTOM);
-            return;
           }
+          //          else if (FEATURE1_COMPONENT1.equals(oldState)
+          //              && FEATURE1_COMPOSITE_COMPONENT.equals(newState)) {
+          //            transitionManager.animate(current, newView, IN_NONE_OUT_BOTTOM);
+          //            return;
+          //          }
         }
         super.execute(root, current, newView, oldState, newState, direction);
       }
