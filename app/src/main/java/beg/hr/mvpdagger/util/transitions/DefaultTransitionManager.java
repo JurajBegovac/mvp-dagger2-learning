@@ -9,31 +9,23 @@ import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.flow.DialogKey;
 import flow.Direction;
 
-import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_LEFT_OUT_RIGHT;
-import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_RIGHT_OUT_LEFT;
+/** Created by juraj on 07/02/2017. */
+public class DefaultTransitionManager extends TransitionManager {
 
-/** Created by juraj on 02/02/2017. */
-public class DefaultShowViewFactory implements ShowViewFactory {
-
-  private final TransitionManager transitionManager;
-
-  private Object out;
-  private Object in;
-
-  public DefaultShowViewFactory(TransitionManager transitionManager) {
-    this.transitionManager = transitionManager;
+  public DefaultTransitionManager(ViewGroup root) {
+    super(root);
   }
 
   @Override
   public boolean shouldReverse(Object out, Object in) {
-    boolean retValue = transitionManager.inProgress() && this.in.equals(out) && this.out.equals(in);
+    boolean retValue = inProgress() && this.in.equals(out) && this.out.equals(in);
     this.out = out;
     this.in = in;
     return retValue;
   }
 
   @Override
-  public void execute(
+  public void animate(
       @NonNull ViewGroup root,
       @Nullable View current,
       @NonNull View newView,
@@ -64,10 +56,10 @@ public class DefaultShowViewFactory implements ShowViewFactory {
         root.addView(newView);
         break;
       case FORWARD:
-        transitionManager.animate(current, newView, IN_RIGHT_OUT_LEFT);
+        animate(current, newView, IN_RIGHT_OUT_LEFT);
         break;
       case BACKWARD:
-        transitionManager.animate(current, newView, IN_LEFT_OUT_RIGHT);
+        animate(current, newView, IN_LEFT_OUT_RIGHT);
         break;
       default:
         throw new IllegalStateException("Don't know how to handle this direction: " + direction);

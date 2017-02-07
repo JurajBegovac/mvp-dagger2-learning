@@ -1,5 +1,7 @@
 package beg.hr.mvpdagger.util.transitions;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -8,9 +10,10 @@ import com.transitionseverywhere.Transition.TransitionListenerAdapter;
 
 import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.transitions.Transitions.Config;
+import flow.Direction;
 
 /** Created by juraj on 03/02/2017. */
-public class TransitionManager {
+public abstract class TransitionManager {
 
   // animation types
   public static final int IN_RIGHT_OUT_LEFT = 200;
@@ -18,11 +21,14 @@ public class TransitionManager {
   public static final int IN_BOTTOM_OUT_NONE = 202;
   public static final int IN_NONE_OUT_BOTTOM = 203;
 
+  // status
   private static final int IDLE = 100;
   private static final int IN_PROGRESS = 101;
 
   private final ViewGroup root;
-
+  protected Object out;
+  protected Object in;
+  // mutable properties
   private View outView;
   private View inView;
   private int status = IDLE;
@@ -30,14 +36,6 @@ public class TransitionManager {
 
   public TransitionManager(ViewGroup root) {
     this.root = root;
-  }
-
-  public boolean inProgress() {
-    return status == IN_PROGRESS;
-  }
-
-  public void reverse() {
-    reverse(inView, outView);
   }
 
   private void reverse(View outView, View inView) {
@@ -57,6 +55,11 @@ public class TransitionManager {
       default:
         throw new IllegalStateException("Wrong animation type");
     }
+  }
+
+  private boolean shouldAddNewView(ViewGroup root, View newView) {
+    // TODO: 02/02/2017 check also if new view is under current view
+    return !Utils.rootContainsView(root, newView);
   }
 
   public void animate(View outView, View inView, int type) {
@@ -107,10 +110,23 @@ public class TransitionManager {
     }
   }
 
-  private boolean shouldAddNewView(ViewGroup root, View newView) {
-    // TODO: 02/02/2017 check also if new view is under current view
-    return !Utils.rootContainsView(root, newView);
+  public boolean inProgress() {
+    return status == IN_PROGRESS;
   }
+
+  public void reverse() {
+    reverse(inView, outView);
+  }
+
+  public abstract boolean shouldReverse(Object out, Object in);
+
+  public abstract void animate(
+      @NonNull ViewGroup root,
+      @Nullable View current,
+      @NonNull View newView,
+      @Nullable Object oldState,
+      @NonNull Object newState,
+      Direction direction);
 
   private static class MyListener extends TransitionListenerAdapter {
     private boolean canceled;

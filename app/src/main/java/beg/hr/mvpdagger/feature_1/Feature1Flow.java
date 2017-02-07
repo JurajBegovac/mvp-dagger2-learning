@@ -14,15 +14,14 @@ import beg.hr.mvpdagger.MvpDaggerApplication;
 import beg.hr.mvpdagger.di.dagger2.components.ActivityComponent;
 import beg.hr.mvpdagger.di.dagger2.modules.ActivityModule;
 import beg.hr.mvpdagger.util.flow.FlowActivity;
-import beg.hr.mvpdagger.util.transitions.DefaultShowViewFactory;
-import beg.hr.mvpdagger.util.transitions.ShowViewFactory;
+import beg.hr.mvpdagger.util.transitions.DefaultTransitionManager;
+import beg.hr.mvpdagger.util.transitions.TransitionManager;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
 import flow.Flow;
 import flow.TraversalCallback;
 
-import static beg.hr.mvpdagger.util.transitions.TransitionManager.IN_BOTTOM_OUT_NONE;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE_COMPONENT;
 
@@ -75,10 +74,10 @@ public class Feature1Flow extends FlowActivity {
   }
 
   @Override
-  protected ShowViewFactory showFactory() {
-    return new DefaultShowViewFactory(transitionManager) {
+  protected TransitionManager transitionManager() {
+    return new DefaultTransitionManager(getRootView()) {
       @Override
-      public void execute(
+      public void animate(
           @NonNull ViewGroup root,
           @Nullable View current,
           @NonNull View newView,
@@ -88,7 +87,7 @@ public class Feature1Flow extends FlowActivity {
         if (oldState != null) {
           if (FEATURE1_COMPOSITE_COMPONENT.equals(oldState)
               && FEATURE1_COMPONENT1.equals(newState)) {
-            transitionManager.animate(current, newView, IN_BOTTOM_OUT_NONE);
+            animate(current, newView, IN_BOTTOM_OUT_NONE);
             return;
           }
           //          else if (FEATURE1_COMPONENT1.equals(oldState)
@@ -97,7 +96,7 @@ public class Feature1Flow extends FlowActivity {
           //            return;
           //          }
         }
-        super.execute(root, current, newView, oldState, newState, direction);
+        super.animate(root, current, newView, oldState, newState, direction);
       }
     };
   }

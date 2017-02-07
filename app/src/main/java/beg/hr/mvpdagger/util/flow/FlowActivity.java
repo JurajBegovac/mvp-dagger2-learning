@@ -14,8 +14,7 @@ import android.widget.TextView;
 
 import java.util.Map;
 
-import beg.hr.mvpdagger.util.transitions.DefaultShowViewFactory;
-import beg.hr.mvpdagger.util.transitions.ShowViewFactory;
+import beg.hr.mvpdagger.util.transitions.DefaultTransitionManager;
 import beg.hr.mvpdagger.util.transitions.TransitionManager;
 import flow.Direction;
 import flow.Flow;
@@ -34,10 +33,9 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   protected static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
   protected BaseDispatcher flowDispatcher;
-  protected TransitionManager transitionManager;
 
   private Dialog dialog;
-  private ShowViewFactory showViewFactory;
+  private TransitionManager transitionManager;
 
   protected abstract Object initScreen();
 
@@ -48,14 +46,13 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       Direction direction,
       TraversalCallback callback);
 
-  protected ShowViewFactory showFactory() {
-    return new DefaultShowViewFactory(transitionManager);
+  protected TransitionManager transitionManager() {
+    return new DefaultTransitionManager(getRootView());
   }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
-    transitionManager = new TransitionManager(getRootView());
-    showViewFactory = showFactory();
+    transitionManager = transitionManager();
     super.onCreate(savedInstanceState);
   }
 
@@ -108,7 +105,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
       dialogKey = null;
     }
 
-    if (showViewFactory.shouldReverse(outKey, mainKey)) {
+    if (transitionManager.shouldReverse(outKey, mainKey)) {
       transitionManager.reverse();
       callback.onTraversalCompleted();
       return;
@@ -179,7 +176,7 @@ public abstract class FlowActivity extends AppCompatActivity implements KeyChang
   }
 
   protected void showMain(View in, Object oldState, Object newState, Direction direction) {
-    showViewFactory.execute(getRootView(), getCurrentView(), in, oldState, newState, direction);
+    transitionManager.animate(getRootView(), getCurrentView(), in, oldState, newState, direction);
   }
 
   protected void showDialog(Dialog dialog) {
