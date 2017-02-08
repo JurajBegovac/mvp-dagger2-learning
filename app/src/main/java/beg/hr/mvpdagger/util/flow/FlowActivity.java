@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import beg.hr.mvpdagger.DefaultKeyChanger;
 import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.transitions.DefaultTransitionManager;
+import beg.hr.mvpdagger.util.transitions.TransitionManager;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
 import flow.Dispatcher;
@@ -32,11 +33,15 @@ public abstract class FlowActivity extends AppCompatActivity {
   }
 
   protected KeyChanger keyChanger() {
-    return new DefaultKeyChanger(this::rootView, transitionManager(), viewComponentFactory());
+    return new DefaultKeyChanger(this::rootView, transitionManager(), viewComponentFactory(), redirect());
   }
 
   protected ViewComponentFactory viewComponentFactory() {
     return new ViewComponentFactory(this);
+  }
+
+  protected Redirect redirect() {
+    return new DefaultRedirect();
   }
 
   @Override

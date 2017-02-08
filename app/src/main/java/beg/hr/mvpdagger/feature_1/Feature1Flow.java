@@ -2,16 +2,12 @@ package beg.hr.mvpdagger.feature_1;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 
-import beg.hr.mvpdagger.DefaultKeyChanger;
-import beg.hr.mvpdagger.util.Utils;
+import beg.hr.mvpdagger.util.flow.DefaultRedirect;
 import beg.hr.mvpdagger.util.flow.FlowActivity;
-import flow.Direction;
-import flow.KeyChanger;
+import beg.hr.mvpdagger.util.flow.Redirect;
+import flow.TraversalCallback;
 
-import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_BOTTOM_OUT_NONE;
-import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_NONE_OUT_BOTTOM;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPONENT1;
 import static beg.hr.mvpdagger.util.view.ViewComponentFactory.FEATURE1_COMPOSITE_COMPONENT;
 
@@ -27,23 +23,21 @@ public class Feature1Flow extends FlowActivity {
   }
 
   @Override
-  protected KeyChanger keyChanger() {
-    return new DefaultKeyChanger(() -> rootView(), transitionManager(), viewComponentFactory()) {
-      @Override
-      protected void showMainContent(
-          View newView, Object oldState, Object newState, Direction direction) {
+  protected Redirect redirect() {
+    return new DefaultRedirect() {
 
-        if (FEATURE1_COMPONENT1.equals(newState) && FEATURE1_COMPOSITE_COMPONENT.equals(oldState)) {
-          this.transitionManager.animate(
-              Utils.getCurrentView(rootView()), newView, IN_BOTTOM_OUT_NONE);
+      @Override
+      public boolean shouldRedirect(Object key) {
+        return FEATURE1_COMPONENT1.equals(key) || super.shouldRedirect(key);
+      }
+
+      @Override
+      public void redirect(TraversalCallback callback, Object mainKey, Context context) {
+        if (FEATURE1_COMPONENT1.equals(mainKey)) {
+          toDialogKey(callback, mainKey, context);
           return;
         }
-        if (FEATURE1_COMPOSITE_COMPONENT.equals(newState) && FEATURE1_COMPONENT1.equals(oldState)) {
-          this.transitionManager.animate(
-              Utils.getCurrentView(rootView()), newView, IN_NONE_OUT_BOTTOM);
-          return;
-        }
-        super.showMainContent(newView, oldState, newState, direction);
+        super.redirect(callback, mainKey, context);
       }
     };
   }

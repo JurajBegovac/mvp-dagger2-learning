@@ -14,7 +14,7 @@ public abstract class NewFlowKey implements Parcelable {
     return new AutoValue_NewFlowKey(intent, enterAnim, exitAnim);
   }
 
-  abstract Intent intent();
+  public abstract Intent intent();
 
   @AnimRes
   abstract int enterAnim();

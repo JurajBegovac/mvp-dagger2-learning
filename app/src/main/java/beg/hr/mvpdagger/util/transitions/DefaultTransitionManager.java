@@ -9,7 +9,6 @@ import com.transitionseverywhere.Transition.TransitionListenerAdapter;
 import javax.inject.Provider;
 
 import beg.hr.mvpdagger.util.Utils;
-import beg.hr.mvpdagger.util.flow.TransitionManager;
 import beg.hr.mvpdagger.util.transitions.Transitions.Config;
 
 /** Created by juraj on 03/02/2017. */

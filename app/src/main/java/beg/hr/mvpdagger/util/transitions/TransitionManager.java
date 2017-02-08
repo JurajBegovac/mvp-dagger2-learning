@@ -1,4 +1,4 @@
-package beg.hr.mvpdagger.util.flow;
+package beg.hr.mvpdagger.util.transitions;
 
 import android.view.View;
 

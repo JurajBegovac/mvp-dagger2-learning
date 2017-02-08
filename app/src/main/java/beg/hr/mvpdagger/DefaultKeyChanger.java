@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -16,16 +17,20 @@ import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.flow.DialogKey;
 import beg.hr.mvpdagger.util.flow.FlowViewState2;
 import beg.hr.mvpdagger.util.flow.NewFlowKey;
-import beg.hr.mvpdagger.util.flow.TransitionManager;
+import beg.hr.mvpdagger.util.flow.Redirect;
+import beg.hr.mvpdagger.util.transitions.TransitionManager;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
+import flow.Flow;
+import flow.History.Builder;
 import flow.KeyChanger;
 import flow.State;
 import flow.TraversalCallback;
 
 import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_LEFT_OUT_RIGHT;
 import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_RIGHT_OUT_LEFT;
+import static flow.Direction.REPLACE;
 
 /** Created by juraj on 07/02/2017. */
 public class DefaultKeyChanger implements KeyChanger {
@@ -35,7 +40,9 @@ public class DefaultKeyChanger implements KeyChanger {
 
   protected final ViewComponentFactory viewComponentFactory;
   protected final TransitionManager transitionManager;
+
   private final Provider<ViewGroup> rootProvider;
+  private final Redirect redirect;
 
   private Dialog dialog;
   private Object in;
@@ -44,10 +51,12 @@ public class DefaultKeyChanger implements KeyChanger {
   public DefaultKeyChanger(
       Provider<ViewGroup> rootProvider,
       TransitionManager transitionManager,
-      ViewComponentFactory viewComponentFactory) {
+      ViewComponentFactory viewComponentFactory,
+      Redirect redirect) {
     this.rootProvider = rootProvider;
     this.transitionManager = transitionManager;
     this.viewComponentFactory = viewComponentFactory;
+    this.redirect = redirect;
   }
 
   @Override
@@ -79,24 +88,30 @@ public class DefaultKeyChanger implements KeyChanger {
       return;
     }
 
+    if (redirect.shouldRedirect(mainKey)) {
+      redirect.redirect(callback, mainKey, incomingContexts.get(mainKey));
+      return;
+    }
+
     if (mainKey.equals(FLOW_EMPTY_SIGNAL)) {
       // this is first empty signal and  it'll be replaced
-      TextView view = new TextView(root.getContext());
+      TextView view = new TextView(incomingContexts.get(mainKey));
       view.setText("Empty view");
       root.removeAllViews();
       root.addView(view);
       callback.onTraversalCompleted();
       return;
     }
+
     if (mainKey.equals(FLOW_FINISH_SIGNAL)) {
       // TODO: 07/02/2017
       //      finish();
       callback.onTraversalCompleted();
       return;
     }
+
     if (mainKey instanceof NewFlowKey) {
-      // TODO: 07/02/2017
-      //      startAnotherFlow(callback, (NewFlowKey) mainKey);
+      startAnotherFlow(callback, (NewFlowKey) mainKey, incomingContexts.get(mainKey));
       callback.onTraversalCompleted();
       return;
     }
@@ -113,8 +128,15 @@ public class DefaultKeyChanger implements KeyChanger {
 
     dismissOldDialog();
     if (dialogKey != null) {
-      // TODO: 07/02/2017 dialog
-      //      ViewComponent dialogComponent = viewComponentFactory.create(dialogKey, null, new FlowViewState2(incomingState))
+      // TODO: 07/02/2017 handle dialog state ?!
+      ViewComponent dialogComponent =
+          viewComponentFactory.create(dialogKey, null, new FlowViewState2(incomingState));
+      View dialogView = null;
+      if (dialogComponent != null) dialogView = dialogComponent.view();
+      if (dialogView != null) {
+        dialog = dialogContent(dialogKey, dialogView, incomingContexts.get(dialogKey));
+        dialog.show();
+      }
     }
     callback.onTraversalCompleted();
   }
@@ -133,30 +155,34 @@ public class DefaultKeyChanger implements KeyChanger {
     }
   }
 
-  //  private Object getMainKey(Object parent) {
-  //    if (parent instanceof DialogKey) return ((DialogKey) parent).mainContent();
-  //    return parent;
-  //  }
-  //
-  //  private boolean shouldAnimate(State outgoingState) {
-  //    return outgoingState == null || !isOutgoingStateDialog(outgoingState);
-  //  }
+  private void startAnotherFlow(
+      TraversalCallback callback, NewFlowKey newFlowKey, Context context) {
+    callback.onTraversalCompleted();
+    Builder historyBuilder = Flow.get(context).getHistory().buildUpon();
+    historyBuilder.pop();
+    Flow.get(context).setHistory(historyBuilder.build(), REPLACE);
+    context.startActivity(newFlowKey.intent());
+  }
 
-  //  private boolean isOutgoingStateDialog(State outgoingState) {
-  //    return outgoingState.getKey() instanceof DialogKey;
-  //  }
-  //
-  //  private void startAnotherFlow(TraversalCallback callback, NewFlowKey newFlowKey) {
-  //    callback.onTraversalCompleted();
-  //    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
-  //    historyBuilder.pop();
-  //    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
-  //
-  //    startActivity(newFlowKey.intent());
-  //    overridePendingTransition(newFlowKey.enterAnim(), newFlowKey.exitAnim());
-  //  }
-  //
+  /**
+   * Default dialog - Alert dialog.
+   *
+   * <p>Override this to show some other dialog (e.g. BottomSheets dialog)
+   */
+  protected Dialog dialogContent(Object dialogKey, View view, Context context) {
+    return new AlertDialog.Builder(context)
+        .setView(view)
+        .setOnCancelListener(dialog1 -> Flow.get(context).goBack())
+        .create();
+  }
 
+  /**
+   * Shows main content - default behavior: REPLACE - just replaces current view, FORWARD - go
+   * right, BACK - go left
+   *
+   * <p>Override this if you want to show main view in some another way (e.g. from bottom to top
+   * etc.)
+   */
   protected void showMainContent(
       View newView, Object oldState, Object newState, Direction direction) {
     ViewGroup root = rootProvider.get();
@@ -194,19 +220,4 @@ public class DefaultKeyChanger implements KeyChanger {
         throw new IllegalStateException("Don't know how to handle this direction: " + direction);
     }
   }
-
-  protected void showDialog(Dialog dialog) {
-    this.dialog = dialog;
-    this.dialog.show();
-  }
-
-  //  protected void mainKeyToDialogKey(Object mainKey, TraversalCallback callback) {
-  //    callback.onTraversalCompleted();
-  //    Builder historyBuilder = Flow.get(this).getHistory().buildUpon();
-  //    historyBuilder.pop();
-  //    Object main = getMainKey(historyBuilder.peek());
-  //    historyBuilder.push(new DialogKey(main, mainKey));
-  //    Flow.get(this).setHistory(historyBuilder.build(), REPLACE);
-  //  }
-
 }
