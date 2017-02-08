@@ -36,7 +36,6 @@ import static flow.Direction.REPLACE;
 public class DefaultKeyChanger implements KeyChanger {
 
   public static final Object FLOW_EMPTY_SIGNAL = "flow_empty_signal";
-  public static final Object FLOW_FINISH_SIGNAL = "flow_finish_signal";
 
   protected final ViewComponentFactory viewComponentFactory;
   protected final TransitionManager transitionManager;
@@ -99,13 +98,6 @@ public class DefaultKeyChanger implements KeyChanger {
       view.setText("Empty view");
       root.removeAllViews();
       root.addView(view);
-      callback.onTraversalCompleted();
-      return;
-    }
-
-    if (mainKey.equals(FLOW_FINISH_SIGNAL)) {
-      // TODO: 07/02/2017
-      //      finish();
       callback.onTraversalCompleted();
       return;
     }
