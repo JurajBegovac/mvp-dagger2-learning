@@ -90,8 +90,7 @@ public class Component2ViewDriver extends ViewDriver<Component2View, State> {
     static Observable<Event> bind(Component2View view, String type) {
       Builder builder = Event.builder().origin("component2_view_driver");
       if (TYPE_BUTTON_PRESSED.equals(type))
-        return RxView.clicks(view.btn)
-            .map(e -> builder.type(TYPE_BUTTON_PRESSED).build());
+        return RxView.clicks(view.btn).map(e -> builder.type(TYPE_BUTTON_PRESSED).build());
       if (TYPE_BUTTON_BACK_PRESSED.equals(type))
         return RxView.clicks(view.back).map(e -> builder.type(TYPE_BUTTON_BACK_PRESSED).build());
       if (TYPE_TEXT_CHANGED.equals(type))

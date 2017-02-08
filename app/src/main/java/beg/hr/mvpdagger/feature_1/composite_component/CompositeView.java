@@ -3,7 +3,6 @@ package beg.hr.mvpdagger.feature_1.composite_component;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import beg.hr.mvpdagger.R;
 import beg.hr.mvpdagger.feature_1.component_1.Component1View;

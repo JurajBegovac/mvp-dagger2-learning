@@ -112,7 +112,6 @@ public class DefaultKeyChanger implements KeyChanger {
 
     if (mainKey instanceof NewFlowKey) {
       startAnotherFlow(callback, (NewFlowKey) mainKey, incomingContexts.get(mainKey));
-      callback.onTraversalCompleted();
       return;
     }
 

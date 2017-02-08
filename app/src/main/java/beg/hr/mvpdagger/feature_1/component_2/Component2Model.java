@@ -39,9 +39,7 @@ public class Component2Model {
   private Observable<Object> getNavigation(Input input) {
     // TODO: 31/01/2017
     Observable<String> buttonEvent =
-        input
-            .events(TYPE_BUTTON_PRESSED)
-            .map(event -> ViewComponentFactory.FEATURE1_COMPONENT1);
+        input.events(TYPE_BUTTON_PRESSED).map(event -> ViewComponentFactory.FEATURE1_COMPONENT1);
 
     // TODO: 31/01/2017 This now maps this event just to type of event - map it to some navigation command
     Observable<String> goBackEvent = input.events(TYPE_BUTTON_BACK_PRESSED).map(Event::type);

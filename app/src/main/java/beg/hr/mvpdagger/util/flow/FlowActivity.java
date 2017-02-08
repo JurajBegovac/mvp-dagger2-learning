@@ -33,7 +33,8 @@ public abstract class FlowActivity extends AppCompatActivity {
   }
 
   protected KeyChanger keyChanger() {
-    return new DefaultKeyChanger(this::rootView, transitionManager(), viewComponentFactory(), redirect());
+    return new DefaultKeyChanger(
+        this::rootView, transitionManager(), viewComponentFactory(), redirect());
   }
 
   protected ViewComponentFactory viewComponentFactory() {
