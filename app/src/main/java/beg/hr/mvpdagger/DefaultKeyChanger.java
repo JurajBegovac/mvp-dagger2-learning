@@ -7,7 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import java.util.Map;
 
@@ -28,8 +32,6 @@ import flow.KeyChanger;
 import flow.State;
 import flow.TraversalCallback;
 
-import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_LEFT_OUT_RIGHT;
-import static beg.hr.mvpdagger.util.transitions.DefaultTransitionManager.IN_RIGHT_OUT_LEFT;
 import static flow.Direction.REPLACE;
 
 /** Created by juraj on 07/02/2017. */
@@ -176,7 +178,7 @@ public class DefaultKeyChanger implements KeyChanger {
    */
   protected void showMainContent(
       View newView, Object oldState, Object newState, Direction direction) {
-    ViewGroup root = rootProvider.get();
+    ViewAnimator root = (ViewAnimator) rootProvider.get();
     View current = Utils.getCurrentView(root);
 
     if (oldState instanceof DialogKey) {
@@ -202,10 +204,53 @@ public class DefaultKeyChanger implements KeyChanger {
         root.addView(newView);
         break;
       case FORWARD:
-        transitionManager.animate(current, newView, IN_RIGHT_OUT_LEFT);
+        Animation animation =
+            AnimationUtils.loadAnimation(root.getContext(), R.anim.slide_in_bottom);
+        animation.setAnimationListener(
+            new AnimationListener() {
+              @Override
+              public void onAnimationStart(Animation animation) {}
+
+              @Override
+              public void onAnimationEnd(Animation animation) {
+                root.setInAnimation(null);
+                root.setOutAnimation(null);
+                root.removeView(current);
+              }
+
+              @Override
+              public void onAnimationRepeat(Animation animation) {}
+            });
+        root.setInAnimation(animation);
+        root.setOutAnimation(root.getContext(), R.anim.nothing);
+        root.addView(newView);
+        root.setDisplayedChild(root.getChildCount() - 1);
+//                transitionManager.animate(current, newView, IN_RIGHT_OUT_LEFT);
         break;
       case BACKWARD:
-        transitionManager.animate(current, newView, IN_LEFT_OUT_RIGHT);
+        Animation animation2 =
+            AnimationUtils.loadAnimation(root.getContext(), R.anim.nothing);
+        animation2.setAnimationListener(
+            new AnimationListener() {
+              @Override
+              public void onAnimationStart(Animation animation) {}
+
+              @Override
+              public void onAnimationEnd(Animation animation) {
+                root.setInAnimation(null);
+                root.setOutAnimation(null);
+                root.removeView(current);
+              }
+
+              @Override
+              public void onAnimationRepeat(Animation animation) {}
+            });
+        root.setInAnimation(animation2);
+        root.setOutAnimation(root.getContext(), R.anim.slide_out_bottom);
+        root.addView(newView, 0);
+//        root.removeView(current);
+        root.setDisplayedChild(0);
+        //        transitionManager.animate(current, newView, IN_LEFT_OUT_RIGHT);
         break;
       default:
         throw new IllegalStateException("Don't know how to handle this direction: " + direction);
