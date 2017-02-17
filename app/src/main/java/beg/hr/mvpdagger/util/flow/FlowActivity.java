@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ViewAnimator;
 
 import beg.hr.mvpdagger.DefaultKeyChanger;
 import beg.hr.mvpdagger.util.Utils;
 import beg.hr.mvpdagger.util.transitions.DefaultTransitionManager;
 import beg.hr.mvpdagger.util.transitions.TransitionManager;
+import beg.hr.mvpdagger.util.view.BetterViewAnimator;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Dispatcher;
 import flow.Flow;
@@ -23,7 +22,7 @@ import flow.KeyChanger;
 /** Created by juraj on 19/01/2017. */
 public abstract class FlowActivity extends AppCompatActivity {
 
-  private ViewAnimator viewAnimator;
+  private BetterViewAnimator viewAnimator;
 
   protected abstract Object initScreen();
 
@@ -47,7 +46,7 @@ public abstract class FlowActivity extends AppCompatActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    viewAnimator = new ViewAnimator(this);
+    viewAnimator = new BetterViewAnimator(this);
     viewAnimator.setLayoutParams(
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     setContentView(viewAnimator);
@@ -73,8 +72,8 @@ public abstract class FlowActivity extends AppCompatActivity {
     }
   }
 
-  protected ViewAnimator rootView() {
+  protected BetterViewAnimator rootView() {
     return viewAnimator;
-//    return (ViewGroup) findViewById(android.R.id.content);
+    //    return (ViewGroup) findViewById(android.R.id.content);
   }
 }

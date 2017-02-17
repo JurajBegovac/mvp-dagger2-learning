@@ -7,11 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import java.util.Map;
 
@@ -23,6 +19,8 @@ import beg.hr.mvpdagger.util.flow.FlowViewState2;
 import beg.hr.mvpdagger.util.flow.NewFlowKey;
 import beg.hr.mvpdagger.util.flow.Redirect;
 import beg.hr.mvpdagger.util.transitions.TransitionManager;
+import beg.hr.mvpdagger.util.view.BetterViewAnimator;
+import beg.hr.mvpdagger.util.view.BetterViewAnimator.Config;
 import beg.hr.mvpdagger.util.view.ViewComponent;
 import beg.hr.mvpdagger.util.view.ViewComponentFactory;
 import flow.Direction;
@@ -83,11 +81,11 @@ public class DefaultKeyChanger implements KeyChanger {
       dialogKey = null;
     }
 
-    if (shouldReverse(outKey, mainKey)) {
-      transitionManager.reverse();
-      callback.onTraversalCompleted();
-      return;
-    }
+    //    if (shouldReverse(outKey, mainKey)) {
+    //      transitionManager.reverse();
+    //      callback.onTraversalCompleted();
+    //      return;
+    //    }
 
     if (redirect.shouldRedirect(mainKey)) {
       redirect.redirect(callback, mainKey, incomingContexts.get(mainKey));
@@ -178,8 +176,7 @@ public class DefaultKeyChanger implements KeyChanger {
    */
   protected void showMainContent(
       View newView, Object oldState, Object newState, Direction direction) {
-    ViewAnimator root = (ViewAnimator) rootProvider.get();
-    View current = Utils.getCurrentView(root);
+    BetterViewAnimator root = (BetterViewAnimator) rootProvider.get();
 
     if (oldState instanceof DialogKey) {
       Object mainKey = ((DialogKey) oldState).mainContent();
@@ -204,52 +201,11 @@ public class DefaultKeyChanger implements KeyChanger {
         root.addView(newView);
         break;
       case FORWARD:
-        Animation animation =
-            AnimationUtils.loadAnimation(root.getContext(), R.anim.slide_in_bottom);
-        animation.setAnimationListener(
-            new AnimationListener() {
-              @Override
-              public void onAnimationStart(Animation animation) {}
-
-              @Override
-              public void onAnimationEnd(Animation animation) {
-                root.setInAnimation(null);
-                root.setOutAnimation(null);
-                root.removeView(current);
-              }
-
-              @Override
-              public void onAnimationRepeat(Animation animation) {}
-            });
-        root.setInAnimation(animation);
-        root.setOutAnimation(root.getContext(), R.anim.nothing);
-        root.addView(newView);
-        root.setDisplayedChild(root.getChildCount() - 1);
-//                transitionManager.animate(current, newView, IN_RIGHT_OUT_LEFT);
+        root.showView(Config.create(newView, Config.IN_BOTTOM_OUT_NOTHING));
+        //                transitionManager.animate(current, newView, IN_RIGHT_OUT_LEFT);
         break;
       case BACKWARD:
-        Animation animation2 =
-            AnimationUtils.loadAnimation(root.getContext(), R.anim.nothing);
-        animation2.setAnimationListener(
-            new AnimationListener() {
-              @Override
-              public void onAnimationStart(Animation animation) {}
-
-              @Override
-              public void onAnimationEnd(Animation animation) {
-                root.setInAnimation(null);
-                root.setOutAnimation(null);
-                root.removeView(current);
-              }
-
-              @Override
-              public void onAnimationRepeat(Animation animation) {}
-            });
-        root.setInAnimation(animation2);
-        root.setOutAnimation(root.getContext(), R.anim.slide_out_bottom);
-        root.addView(newView, 0);
-//        root.removeView(current);
-        root.setDisplayedChild(0);
+        root.showView(Config.create(newView, Config.IN_NOTHING_OUT_BOTTOM));
         //        transitionManager.animate(current, newView, IN_LEFT_OUT_RIGHT);
         break;
       default:

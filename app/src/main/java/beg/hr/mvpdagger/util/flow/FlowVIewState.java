@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 /** Created by juraj on 01/02/2017. */
-public class FlowViewState implements ViewState {
+public class FlowVIewState implements ViewState {
 
   private final Object key;
   private final BaseDispatcher flowDispatcher;
 
-  public FlowViewState(Object key, BaseDispatcher flowDispatcher) {
+  public FlowVIewState(Object key, BaseDispatcher flowDispatcher) {
     this.key = key;
     this.flowDispatcher = flowDispatcher;
   }
@@ -33,7 +33,7 @@ public class FlowViewState implements ViewState {
 
       @Override
       public ViewState child(String key) {
-        return FlowViewState.child(this, key);
+        return FlowVIewState.child(this, key);
       }
     };
   }
